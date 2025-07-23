@@ -1,3 +1,4 @@
+
 -- Count unprocessed data by VES service
 
 select t.[VES Service],
@@ -90,9 +91,9 @@ from (select case
 group by t.[VES Service]
 order by t.[VES Service];
 
-select count(*),
+select count(*) as Count,
        s.TableName,
-       left(s.ForeignKey, 5),
+       iif(s.foreignkey is null, null,'Yes') as [ForeignKey exists],
        s.Operation,
        e.Type,
        c.MonitoringType
@@ -102,5 +103,5 @@ from NETWORKNODEFLOW.dbo.SubmissionStatus s
     left join NETWORKNODEFLOW.dbo.EnforcementAction e
     on e.EnforcementActionId = s.ID
 where s.Status is null
-group by s.TableName, left(s.ForeignKey, 5), s.Operation, e.Type, c.MonitoringType
-order by s.TableName, left(s.ForeignKey, 5), s.Operation, e.Type, c.MonitoringType
+group by s.TableName, iif(s.foreignkey is null, null, 'Yes'), s.Operation, e.Type, c.MonitoringType
+order by s.TableName, iif(s.foreignkey is null, null, 'Yes'), s.Operation, e.Type, c.MonitoringType
