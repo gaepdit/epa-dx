@@ -1,7 +1,5 @@
 USE [NETWORKNODEFLOW];
 GO
-SET ANSI_NULLS ON;
-GO
 
 CREATE OR ALTER TRIGGER dbo.TG_ICIS_SubmissionStatus
     ON dbo.SubmissionStatus

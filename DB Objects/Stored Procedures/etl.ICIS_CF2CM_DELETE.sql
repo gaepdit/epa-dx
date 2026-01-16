@@ -1,7 +1,5 @@
 USE airbranch;
 GO
-SET ANSI_NULLS ON;
-GO
 
 CREATE OR ALTER PROCEDURE etl.ICIS_CF2CM_DELETE
 AS
@@ -9,18 +7,13 @@ AS
 /**************************************************************************************************
 
 Author:     Vidyanand Dhande
-Overview:   Processes Case File to Compliance Monitoring Linkage deletions 
-            for ICIS-Air 
+Overview:   Processes Case File to Compliance Monitoring Linkage deletions for ICIS-Air
    
   * This procedure takes each deleted CF2CM Linkage from the
   * AIRBRANCH schema and deletes the associated values from the AIRICIS tables.
-  * A COMMIT is issued after each deleted record is processed.
 
 Tables written to:
   NETWORKNODEFLOW.dbo.CASEFILE2CMLINK 
-  AIRBRANCH.dbo.ICIS_DELETE 
-  
-Tables accessed:
   AIRBRANCH.dbo.ICIS_DELETE 
 
 Modification History:
@@ -32,37 +25,37 @@ Previously  DWaldron            Initially created in Oracle
 
 ***************************************************************************************************/
 
-     SET XACT_ABORT, NOCOUNT ON;
-    BEGIN TRY
+    SET XACT_ABORT, NOCOUNT ON;
+BEGIN TRY
 
-        BEGIN TRANSACTION;
+    BEGIN TRANSACTION;
 
-        SELECT ad.ID AS                    ID
-             , ad.DATAFAMILY AS            DATAFAMILY
-             , SUBSTRING(ad.ID, 1, 25) AS  CASEFILEID
-             , SUBSTRING(ad.ID, 27, 25) AS COMPLIANCEMONITORINGID
-        INTO #ICIS_CF2CM_DELETE
-        FROM   AIRBRANCH.dbo.ICIS_DELETE AS ad
-        WHERE  ad.ICIS_STATUSIND <> 'P'
-               AND ad.DATAFAMILY = 'CF2CMLINKAGE';
+    SELECT ad.ID                    AS ID,
+           ad.DATAFAMILY            AS DATAFAMILY,
+           SUBSTRING(ad.ID, 1, 25)  AS CASEFILEID,
+           SUBSTRING(ad.ID, 27, 25) AS COMPLIANCEMONITORINGID
+    INTO #ICIS_CF2CM_DELETE
+    FROM AIRBRANCH.dbo.ICIS_DELETE AS ad
+    WHERE ad.ICIS_STATUSIND <> 'P'
+      AND ad.DATAFAMILY = 'CF2CMLINKAGE';
 
-        DELETE t
-        FROM NETWORKNODEFLOW.dbo.CASEFILE2CMLINK t
+    DELETE t
+    FROM NETWORKNODEFLOW.dbo.CASEFILE2CMLINK t
         INNER JOIN #ICIS_CF2CM_DELETE i
-          ON t.CASEFILEID = i.CASEFILEID
-             AND t.COMPLIANCEMONITORINGID = i.COMPLIANCEMONITORINGID;
+            ON t.CASEFILEID = i.CASEFILEID
+            AND t.COMPLIANCEMONITORINGID = i.COMPLIANCEMONITORINGID;
 
-        UPDATE ad
-           SET
-               ad.ICIS_STATUSIND = 'P'
-             , ad.ICIS_PROCESSDATE = GETDATE()
-        FROM AIRBRANCH.dbo.ICIS_DELETE ad
+    UPDATE ad
+    SET ad.ICIS_STATUSIND   = 'P',
+        ad.ICIS_PROCESSDATE = GETDATE()
+    FROM AIRBRANCH.dbo.ICIS_DELETE ad
         INNER JOIN #ICIS_CF2CM_DELETE i
-          ON ad.ID = i.ID
-             AND ad.DATAFAMILY = i.DATAFAMILY;
+            ON ad.ID = i.ID
+            AND ad.DATAFAMILY = i.DATAFAMILY;
 
-        COMMIT TRANSACTION;
-      RETURN 0;
+    COMMIT TRANSACTION;
+
+    RETURN 0;
 END TRY
 BEGIN CATCH
     IF @@trancount > 0

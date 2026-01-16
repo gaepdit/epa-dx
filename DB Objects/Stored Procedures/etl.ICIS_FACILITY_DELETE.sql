@@ -1,7 +1,5 @@
 USE airbranch;
 GO
-SET ANSI_NULLS ON;
-GO
 
 CREATE OR ALTER PROCEDURE etl.ICIS_FACILITY_DELETE
 AS
@@ -35,78 +33,78 @@ Previously  DWaldron            Initially created in Oracle
 
 ***************************************************************************************************/
 
-     SET XACT_ABORT, NOCOUNT ON;
-    BEGIN TRY
+    SET XACT_ABORT, NOCOUNT ON;
+BEGIN TRY
 
-        BEGIN TRANSACTION;
+    BEGIN TRANSACTION;
 
-        SELECT ad.ID AS         ID
-             , ad.DATAFAMILY AS DATAFAMILY
-             , ad.ID AS         AIRFACILITYID
-        INTO #ICIS_FACILITY_DELETE
-        FROM   airbranch.dbo.ICIS_DELETE AS ad
-        WHERE  ad.ICIS_STATUSIND <> 'P'
-               AND ad.DATAFAMILY = 'FACILITY';
+    SELECT ad.ID         AS ID,
+           ad.DATAFAMILY AS DATAFAMILY,
+           ad.ID         AS AIRFACILITYID
+    INTO #ICIS_FACILITY_DELETE
+    FROM airbranch.dbo.ICIS_DELETE AS ad
+    WHERE ad.ICIS_STATUSIND <> 'P'
+      AND ad.DATAFAMILY = 'FACILITY';
 
-        DELETE t
-        FROM NETWORKNODEFLOW.dbo.PORTABLESOURCE t
+    DELETE t
+    FROM NETWORKNODEFLOW.dbo.PORTABLESOURCE t
         INNER JOIN #ICIS_FACILITY_DELETE i
-          ON t.AIRFACILITYID = i.AIRFACILITYID;
+            ON t.AIRFACILITYID = i.AIRFACILITYID;
 
-        DELETE t
-        FROM NETWORKNODEFLOW.dbo.NAICS t
+    DELETE t
+    FROM NETWORKNODEFLOW.dbo.NAICS t
         INNER JOIN #ICIS_FACILITY_DELETE i
-          ON t.AIRFACILITYID = i.AIRFACILITYID;
+            ON t.AIRFACILITYID = i.AIRFACILITYID;
 
-        DELETE t
-        FROM NETWORKNODEFLOW.dbo.SIC t
+    DELETE t
+    FROM NETWORKNODEFLOW.dbo.SIC t
         INNER JOIN #ICIS_FACILITY_DELETE i
-          ON t.AIRFACILITYID = i.AIRFACILITYID;
+            ON t.AIRFACILITYID = i.AIRFACILITYID;
 
-        SELECT t.GeographicCoordinateID
-             , t.GaAirFacilityID
-        INTO #AirGeographicCoordinate_DELETE
-        FROM   NETWORKNODEFLOW.dbo.GeographicCoordinate AS t
+    SELECT t.GeographicCoordinateID,
+           t.GaAirFacilityID
+    INTO #AirGeographicCoordinate_DELETE
+    FROM NETWORKNODEFLOW.dbo.GeographicCoordinate AS t
         INNER JOIN NETWORKNODEFLOW.dbo.AirGeographicCoordinate AS a
-          ON a.GeographicCoordinateID = t.GeographicCoordinateID
+            ON a.GeographicCoordinateID = t.GeographicCoordinateID
         INNER JOIN #ICIS_FACILITY_DELETE AS i
-          ON a.AirFacilityID = i.AIRFACILITYID;
+            ON a.AirFacilityID = i.AIRFACILITYID;
 
-        DELETE t
-        FROM NETWORKNODEFLOW.dbo.AirGeographicCoordinate t
+    DELETE t
+    FROM NETWORKNODEFLOW.dbo.AirGeographicCoordinate t
         INNER JOIN #AirGeographicCoordinate_DELETE AS i
-          ON t.AirFacilityID = i.GaAirFacilityID
-             AND t.GeographicCoordinateID = i.GeographicCoordinateID;
+            ON t.AirFacilityID = i.GaAirFacilityID
+            AND t.GeographicCoordinateID = i.GeographicCoordinateID;
 
-        DELETE t
-        FROM NETWORKNODEFLOW.dbo.GeographicCoordinate t
+    DELETE t
+    FROM NETWORKNODEFLOW.dbo.GeographicCoordinate t
         INNER JOIN #AirGeographicCoordinate_DELETE AS i
-          ON t.GaAirFacilityID = i.GaAirFacilityID
-             AND t.GeographicCoordinateID = i.GeographicCoordinateID;
+            ON t.GaAirFacilityID = i.GaAirFacilityID
+            AND t.GeographicCoordinateID = i.GeographicCoordinateID;
 
-        DROP TABLE #AirGeographicCoordinate_DELETE;
+    DROP TABLE #AirGeographicCoordinate_DELETE;
 
-        DELETE t
-        FROM NETWORKNODEFLOW.dbo.AirPrograms t
+    DELETE t
+    FROM NETWORKNODEFLOW.dbo.AirPrograms t
         INNER JOIN #ICIS_FACILITY_DELETE i
-          ON t.AirFacilityID = i.AIRFACILITYID;
+            ON t.AirFacilityID = i.AIRFACILITYID;
 
-        DELETE t
-        FROM NETWORKNODEFLOW.dbo.AirFacility t
+    DELETE t
+    FROM NETWORKNODEFLOW.dbo.AirFacility t
         INNER JOIN #ICIS_FACILITY_DELETE i
-          ON t.AirFacilityID = i.AIRFACILITYID;
+            ON t.AirFacilityID = i.AIRFACILITYID;
 
-        UPDATE ad
-           SET
-               ad.ICIS_STATUSIND = 'P'
-             , ad.ICIS_PROCESSDATE = GETDATE()
-        FROM AIRBRANCH.dbo.ICIS_DELETE ad
+    UPDATE ad
+    SET ad.ICIS_STATUSIND   = 'P',
+        ad.ICIS_PROCESSDATE = GETDATE()
+    FROM AIRBRANCH.dbo.ICIS_DELETE ad
         INNER JOIN #ICIS_FACILITY_DELETE i
-          ON ad.ID = i.AIRFACILITYID
-             AND ad.DATAFAMILY = 'FACILITY';
+            ON ad.ID = i.AIRFACILITYID
+            AND ad.DATAFAMILY = 'FACILITY';
 
-        COMMIT TRANSACTION;
-      RETURN 0;
+    COMMIT TRANSACTION;
+
+    RETURN 0;
 END TRY
 BEGIN CATCH
     IF @@trancount > 0

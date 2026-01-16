@@ -1,7 +1,5 @@
 USE airbranch;
 GO
-SET ANSI_NULLS ON;
-GO
 
 CREATE OR ALTER PROCEDURE etl.ICIS_POLLUTANT_DELETE
 AS
@@ -18,50 +16,46 @@ Tables written to:
   NETWORKNODEFLOW.dbo.AIRPOLLUTANTS
   airbranch.dbo.ICIS_DELETE
 
-Tables accessed:
-  airbranch.dbo.ICIS_DELETE 
-
 Modification History:
 When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 Previously  DWaldron            Initially created in Oracle
 2016-06-29  VDhande             Migrated to SQL Server
-2017-10-19  DWaldron            Bugfix: Pollutants not deleted from staging
-                                tables (DX-54)
+2017-10-19  DWaldron            Bugfix: Pollutants not deleted from staging tables (DX-54)
 
   ***************************************************************************************************/
 
-     SET XACT_ABORT, NOCOUNT ON;
-    BEGIN TRY
+    SET XACT_ABORT, NOCOUNT ON;
+BEGIN TRY
 
-        BEGIN TRANSACTION;
+    BEGIN TRANSACTION;
 
-        SELECT ad.ID AS                    ID
-             , ad.DATAFAMILY AS            DATAFAMILY
-             , SUBSTRING(ad.ID, 1, 18) AS  AIRFACILITYID
-             , SUBSTRING(ad.ID, 20, 15) AS AIRPOLLUTANTSCODE
-        INTO #ICIS_POLLUTANT_DELETE
-        FROM   AIRBRANCH.dbo.ICIS_DELETE AS ad
-        WHERE  ad.ICIS_STATUSIND <> 'P'
-               AND ad.DATAFAMILY = 'AIRPOLLUTANT';
+    SELECT ad.ID                    AS ID,
+           ad.DATAFAMILY            AS DATAFAMILY,
+           SUBSTRING(ad.ID, 1, 18)  AS AIRFACILITYID,
+           SUBSTRING(ad.ID, 20, 15) AS AIRPOLLUTANTSCODE
+    INTO #ICIS_POLLUTANT_DELETE
+    FROM AIRBRANCH.dbo.ICIS_DELETE AS ad
+    WHERE ad.ICIS_STATUSIND <> 'P'
+      AND ad.DATAFAMILY = 'AIRPOLLUTANT';
 
-        DELETE t
-        FROM NETWORKNODEFLOW.dbo.AIRPOLLUTANTS t
+    DELETE t
+    FROM NETWORKNODEFLOW.dbo.AIRPOLLUTANTS t
         INNER JOIN #ICIS_POLLUTANT_DELETE i
-          ON t.AIRFACILITYID = i.AIRFACILITYID
-             AND t.AIRPOLLUTANTSCODE = i.AIRPOLLUTANTSCODE;
+            ON t.AIRFACILITYID = i.AIRFACILITYID
+            AND t.AIRPOLLUTANTSCODE = i.AIRPOLLUTANTSCODE;
 
-        UPDATE ad
-           SET
-               ad.ICIS_STATUSIND = 'P'
-             , ad.ICIS_PROCESSDATE = GETDATE()
-        FROM airbranch.dbo.ICIS_DELETE ad
+    UPDATE ad
+    SET ad.ICIS_STATUSIND   = 'P',
+        ad.ICIS_PROCESSDATE = GETDATE()
+    FROM airbranch.dbo.ICIS_DELETE ad
         INNER JOIN #ICIS_POLLUTANT_DELETE i
-          ON ad.ID = i.ID
-             AND ad.DATAFAMILY = i.DATAFAMILY;
+            ON ad.ID = i.ID
+            AND ad.DATAFAMILY = i.DATAFAMILY;
 
-        COMMIT TRANSACTION;
-      RETURN 0;
+    COMMIT TRANSACTION;
+
+    RETURN 0;
 END TRY
 BEGIN CATCH
     IF @@trancount > 0

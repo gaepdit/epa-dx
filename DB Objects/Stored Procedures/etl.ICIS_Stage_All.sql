@@ -1,7 +1,5 @@
 USE airbranch;
 GO
-SET ANSI_NULLS ON;
-GO
 
 CREATE OR ALTER PROCEDURE etl.ICIS_Stage_All
 AS

@@ -1,7 +1,5 @@
 USE airbranch;
 GO
-SET ANSI_NULLS ON;
-GO
 
 CREATE OR ALTER PROCEDURE etl.ICIS_FACILITY_UPDATE
 AS
@@ -665,8 +663,7 @@ BEGIN TRY
              HorizontalCollectionMethodCode,
              HorizontalReferenceDatumCode,
              GaAirFacilityID)
-            OUTPUT inserted.GaAirFacilityID
-                    ,
+            OUTPUT inserted.GaAirFacilityID,
                    inserted.GeographicCoordinateID
                 INTO #New_AirGeographicCoordinate
             SELECT i.NUMFACILITYLATITUDE,
@@ -680,7 +677,7 @@ BEGIN TRY
             INSERT INTO NETWORKNODEFLOW.dbo.AirGeographicCoordinate
             (AirFacilityID,
              GeographicCoordinateID)
-            SELECT *
+            SELECT AirFacilityID, GeographicCoordinateID
             FROM #New_AirGeographicCoordinate;
 
             DROP TABLE #New_AirGeographicCoordinate;

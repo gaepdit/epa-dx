@@ -1,7 +1,5 @@
 USE NETWORKNODEFLOW;
 GO
-SET ANSI_NULLS ON;
-GO
 
 CREATE OR ALTER PROCEDURE dbo.CountFacilityRecords
     @airs varchar(8)

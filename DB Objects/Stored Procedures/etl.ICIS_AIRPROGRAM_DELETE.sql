@@ -1,7 +1,5 @@
 USE airbranch;
 GO
-SET ANSI_NULLS ON;
-GO
 
 CREATE OR ALTER PROCEDURE etl.ICIS_AIRPROGRAM_DELETE
 AS
@@ -32,77 +30,76 @@ Previously  DWaldron            Initially created in Oracle
 
 ***************************************************************************************************/
 
-     SET XACT_ABORT, NOCOUNT ON;
-    BEGIN TRY
+    SET XACT_ABORT, NOCOUNT ON;
+BEGIN TRY
 
-        BEGIN TRANSACTION;
+    BEGIN TRANSACTION;
 
-        -- DATAFAMILY - 'AIRPROGRAMSUBPART'
-        -- Find all deleted air program subparts and delete associate values in ICIS tables
-        SELECT ad.ID AS                    ID
-             , ad.DATAFAMILY AS            DATAFAMILY
-             , SUBSTRING(ad.ID, 20, 20) AS AIRPROGRAMSUBPARTCODE
-             , p.AirProgramID
-        INTO #ICIS_SUBPART_DELETE
-        FROM   AIRBRANCH.dbo.ICIS_DELETE AS ad
+    -- DATAFAMILY - 'AIRPROGRAMSUBPART'
+    -- Find all deleted air program subparts and delete associate values in ICIS tables
+    SELECT ad.ID                    AS ID,
+           ad.DATAFAMILY            AS DATAFAMILY,
+           SUBSTRING(ad.ID, 20, 20) AS AIRPROGRAMSUBPARTCODE,
+           p.AirProgramID
+    INTO #ICIS_SUBPART_DELETE
+    FROM AIRBRANCH.dbo.ICIS_DELETE AS ad
         INNER JOIN NETWORKNODEFLOW.dbo.AirPrograms AS p
-          ON p.AirFacilityID = SUBSTRING(ad.ID, 1, 18)
-             AND p.AirProgramCode = SUBSTRING(ad.ID, 20, 7)
-        WHERE  ad.ICIS_STATUSIND <> 'P'
-               AND ad.DATAFAMILY = 'AIRPROGRAMSUBPART';
+            ON p.AirFacilityID = SUBSTRING(ad.ID, 1, 18)
+            AND p.AirProgramCode = SUBSTRING(ad.ID, 20, 7)
+    WHERE ad.ICIS_STATUSIND <> 'P'
+      AND ad.DATAFAMILY = 'AIRPROGRAMSUBPART';
 
-        DELETE s
-        FROM NETWORKNODEFLOW.dbo.AirProgramSubpart AS s
+    DELETE s
+    FROM NETWORKNODEFLOW.dbo.AirProgramSubpart AS s
         INNER JOIN #ICIS_SUBPART_DELETE d
-          ON d.AirProgramID = s.AirProgramID
-             AND d.AIRPROGRAMSUBPARTCODE = s.AirProgramSubpartCode;
+            ON d.AirProgramID = s.AirProgramID
+            AND d.AIRPROGRAMSUBPARTCODE = s.AirProgramSubpartCode;
 
-        UPDATE ad
-           SET
-               ad.ICIS_STATUSIND = 'P'
-             , ad.ICIS_PROCESSDATE = GETDATE()
-        FROM AIRBRANCH.dbo.ICIS_DELETE ad
+    UPDATE ad
+    SET ad.ICIS_STATUSIND   = 'P',
+        ad.ICIS_PROCESSDATE = GETDATE()
+    FROM AIRBRANCH.dbo.ICIS_DELETE ad
         INNER JOIN #ICIS_SUBPART_DELETE i
-          ON ad.ID = i.ID
-             AND ad.DATAFAMILY = i.DATAFAMILY;
+            ON ad.ID = i.ID
+            AND ad.DATAFAMILY = i.DATAFAMILY;
 
-        DROP TABLE #ICIS_SUBPART_DELETE;
+    DROP TABLE #ICIS_SUBPART_DELETE;
 
-        -- DATAFAMILY 'AIRPROGRAMS'
-        SELECT ad.ID AS                    ID
-             , ad.DATAFAMILY AS            DATAFAMILY
-             , SUBSTRING(ad.ID, 1, 18) AS  AIRFACILITYID
-             , SUBSTRING(ad.ID, 20, 15) AS AIRPROGRAMCODE
-        INTO #ICIS_PROGRAM_DELETE
-        FROM   AIRBRANCH.dbo.ICIS_DELETE AS ad
-        WHERE  ad.ICIS_STATUSIND <> 'P'
-               AND ad.DATAFAMILY = 'AIRPROGRAMS';
+    -- DATAFAMILY 'AIRPROGRAMS'
+    SELECT ad.ID                    AS ID,
+           ad.DATAFAMILY            AS DATAFAMILY,
+           SUBSTRING(ad.ID, 1, 18)  AS AIRFACILITYID,
+           SUBSTRING(ad.ID, 20, 15) AS AIRPROGRAMCODE
+    INTO #ICIS_PROGRAM_DELETE
+    FROM AIRBRANCH.dbo.ICIS_DELETE AS ad
+    WHERE ad.ICIS_STATUSIND <> 'P'
+      AND ad.DATAFAMILY = 'AIRPROGRAMS';
 
-        DELETE t
-        FROM NETWORKNODEFLOW.dbo.AirPrograms t
+    DELETE t
+    FROM NETWORKNODEFLOW.dbo.AirPrograms t
         INNER JOIN #ICIS_PROGRAM_DELETE i
             ON t.AirFacilityID = i.AIRFACILITYID
-               AND i.AIRPROGRAMCODE = CASE
-                                      WHEN t.AirProgramCode IN ('CAANSPS', 'CAANSPSM')
-                                          THEN 'CAANSPS'
-                                      WHEN t.AirProgramCode IN ('CAAMACT', 'CAAGACTM')
-                                          THEN 'CAAMACT'
-                                      ELSE t.AirProgramCode
-                                      END;
+            AND i.AIRPROGRAMCODE = CASE
+                                       WHEN t.AirProgramCode IN ('CAANSPS', 'CAANSPSM')
+                                           THEN 'CAANSPS'
+                                       WHEN t.AirProgramCode IN ('CAAMACT', 'CAAGACTM')
+                                           THEN 'CAAMACT'
+                                       ELSE t.AirProgramCode
+                END;
 
-        UPDATE ad
-           SET
-               ad.ICIS_STATUSIND = 'P'
-             , ad.ICIS_PROCESSDATE = GETDATE()
-        FROM AIRBRANCH.dbo.ICIS_DELETE ad
+    UPDATE ad
+    SET ad.ICIS_STATUSIND   = 'P',
+        ad.ICIS_PROCESSDATE = GETDATE()
+    FROM AIRBRANCH.dbo.ICIS_DELETE ad
         INNER JOIN #ICIS_PROGRAM_DELETE i
-          ON ad.ID = i.ID
-             AND ad.DATAFAMILY = i.DATAFAMILY;
+            ON ad.ID = i.ID
+            AND ad.DATAFAMILY = i.DATAFAMILY;
 
-        DROP TABLE #ICIS_PROGRAM_DELETE;
+    DROP TABLE #ICIS_PROGRAM_DELETE;
 
-        COMMIT TRANSACTION;
-      RETURN 0;
+    COMMIT TRANSACTION;
+
+    RETURN 0;
 END TRY
 BEGIN CATCH
     IF @@trancount > 0
