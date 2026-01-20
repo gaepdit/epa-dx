@@ -1,158 +1,94 @@
-﻿USE airbranch;
-GO
-SET ANSI_NULLS ON;
+﻿USE AIRBRANCH
 GO
 
 CREATE OR ALTER VIEW etl.VW_ICIS_ID_REFERENCE
 AS
 
-    /***************************************************************************
+/**************************************************************************************************
 
 Author:     Doug Waldron
-Created:    2016
 Overview:   Returns a list of all EDT record IDs and associated airbranch IDs
 
 Modification History:
 When        Who                 What
-----------  ------------------  ----------------------------------------
+----------  ------------------  -------------------------------------------------------------------
 2016-10     DWaldron            Initial Version
 2019-12-09  DWaldron            Improved performance
+2026-01-22  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
 
-*******************************************************************************/
+***************************************************************************************************/
 
+SELECT AirWeb.etl.EpaFacilityId(fi.STRAIRSNUMBER) AS EDTID,
 /* Facility */
-SELECT CONCAT('GA000000', SUBSTRING(STRAIRSNUMBER, 3, 10)) AS EDTID,
-       SUBSTRING(STRAIRSNUMBER, 5, 8)                      AS IAIPID,
-       'AIRFACILITY'                                       AS IDCategory
-FROM dbo.APBFACILITYINFORMATION
+       right(fi.STRAIRSNUMBER, 8)                   AS IAIPID,
+       'AIRFACILITY'                                AS IDCategory
+FROM dbo.APBFACILITYINFORMATION fi
+    INNER JOIN dbo.APBHEADERDATA AS hd
+        ON hd.STRAIRSNUMBER = fi.STRAIRSNUMBER
+where hd.STRAIRPROGRAMCODES NOT LIKE '0000000000000%'
 
 UNION ALL
+
+/* FCE */
+select AirWeb.etl.EpaActionId(FacilityId, ActionNumber),
+       convert(varchar(8), Id),
+       'COMPLIANCEMONITORINGFCE'
+from AirWeb.dbo.Fces
+where IsDeleted = 0
+  and ActionNumber is not null
+
+union all
+
+/* Compliance Monitoring */
+select AirWeb.etl.EpaActionId(FacilityId, ActionNumber),
+       convert(varchar(8), Id),
+       case
+           when ComplianceWorkType = 'AnnualComplianceCertification' then 'TVA'
+           when ComplianceWorkType = 'Inspection' then 'POR'
+           when ComplianceWorkType = 'Report' then 'PFF'
+           when ComplianceWorkType = 'SourceTestReview' then 'CST'
+           end
+from AirWeb.dbo.ComplianceWork
+where IsDeleted = 0
+  and ComplianceWorkType in ('AnnualComplianceCertification', 'Inspection', 'Report', 'SourceTestReview')
+  and ActionNumber is not null
+
+union all
 
 /* Case file */
-SELECT CONCAT('GA000A0000', SUBSTRING(enf.STRAIRSNUMBER, 3, 10),
-              RIGHT(CONCAT('00000', enf.STRAFSKEYACTIONNUMBER), 5)) AS EDTID,
-       CAST(enf.STRENFORCEMENTNUMBER AS varchar(6))                 AS IAIPID,
-       'CASEFILE'                                                   AS IDCategory
-FROM dbo.SSCP_AUDITEDENFORCEMENT AS enf
-     INNER JOIN dbo.APBHEADERDATA AS hd
-                ON enf.STRAIRSNUMBER = hd.STRAIRSNUMBER
-WHERE enf.STRAFSKEYACTIONNUMBER IS NOT NULL
-  AND enf.STRACTIONTYPE <> 'LON'
-  AND hd.STRAIRPROGRAMCODES NOT LIKE '0000000000000%'
-  and (enf.IsDeleted = 0 or enf.IsDeleted is null)
+select AirWeb.etl.EpaActionId(c.FacilityId, c.ActionNumber),
+       convert(varchar(8), c.Id),
+       'CASEFILE'
+from AirWeb.dbo.CaseFiles c
+    INNER JOIN dbo.APBHEADERDATA AS hd
+        ON c.FacilityId = iaip_facility.FormatAirsNumber(hd.STRAIRSNUMBER)
+where c.IsDeleted = 0
+  and c.ActionNumber is not null
+  and hd.STRAIRPROGRAMCODES NOT LIKE '0000000000000%'
+  and c.Id in (select e.CaseFileId
+               from AirWeb.dbo.EnforcementActions e
+               where e.IsDeleted = 0
+                 and e.ActionNumber is not null
+                 and e.IsReportableAction = 1)
 
-UNION ALL
+union all
 
-/* Compliance monitoring */
+/* NOV */
+select AirWeb.etl.EpaActionId(e.FacilityId, e.ActionNumber),
+       convert(varchar(8), e.CaseFileId),
+       'ENFORCEMENTACTION'
+from AirWeb.dbo.EnforcementActions e
+    INNER JOIN dbo.APBHEADERDATA AS hd
+        ON e.FacilityId = iaip_facility.FormatAirsNumber(hd.STRAIRSNUMBER)
+where e.IsDeleted = 0
+  and e.ActionNumber is not null
+  and ((e.ActionType in ('NoticeOfViolation', 'NovNfaLetter', 'ProposedConsentOrder') and e.IssueDate is not null)
+    or (e.ActionType in ('ConsentOrder', 'AdministrativeOrder') and e.ExecutedDate is not null))
+  and hd.STRAIRPROGRAMCODES NOT LIKE '0000000000000%'
+  and e.CaseFileId in (select c.Id
+                       from AirWeb.dbo.CaseFiles c
+                       where c.IsDeleted = 0
+                         and c.ActionNumber is not null)
+;
 
-/* FCE*/
-SELECT CONCAT('GA000A0000', SUBSTRING(mm.STRAIRSNUMBER, 3, 10),
-              RIGHT(CONCAT('00000', afs.STRAFSACTIONNUMBER), 5)) AS EDTID,
-       CAST(mm.STRFCENUMBER AS varchar(6))                       AS IAIPID,
-       'COMPLIANCEMONITORINGFCE'                                 AS IDCategory
-FROM dbo.AFSSSCPFCERECORDS AS afs
-     INNER JOIN dbo.SSCPFCEMASTER AS mm
-                ON afs.STRFCENUMBER = mm.STRFCENUMBER
-     INNER JOIN dbo.SSCPFCE AS fce
-                ON mm.STRFCENUMBER = fce.STRFCENUMBER
-where (mm.IsDeleted is null or mm.IsDeleted = 0)
-
-UNION ALL
-
-/* TVACC*/
-SELECT CONCAT('GA000A0000', SUBSTRING(mm.STRAIRSNUMBER, 3, 10),
-              RIGHT(CONCAT('00000', afs.STRAFSACTIONNUMBER), 5)) AS EDTID,
-       CAST(mm.STRTRACKINGNUMBER AS varchar(6))                  AS IAIPID,
-       'TVA'                                                     AS InspectionTypeCode
-FROM dbo.AFSSSCPRECORDS AS afs
-     INNER JOIN dbo.SSCPITEMMASTER AS mm
-                ON mm.STRTRACKINGNUMBER = afs.STRTRACKINGNUMBER
-     INNER JOIN dbo.SSCPACCS AS acc
-                ON mm.STRTRACKINGNUMBER = acc.STRTRACKINGNUMBER
-WHERE mm.STREVENTTYPE = '04'
-  AND mm.DATCOMPLETEDATE IS NOT NULL
-  AND mm.STRDELETE IS NULL
-
-UNION ALL
-
-/* Inspection*/
-SELECT CONCAT('GA000A0000', SUBSTRING(mm.STRAIRSNUMBER, 3, 10),
-              RIGHT(CONCAT('00000', afs.STRAFSACTIONNUMBER), 5)) AS EDTID,
-       CAST(mm.STRTRACKINGNUMBER AS varchar(6))                  AS IAIPID,
-       'POR'                                                     AS InspectionTypeCode
-FROM dbo.AFSSSCPRECORDS AS afs
-     INNER JOIN dbo.SSCPITEMMASTER AS mm
-                ON mm.STRTRACKINGNUMBER = afs.STRTRACKINGNUMBER
-     INNER JOIN dbo.SSCPINSPECTIONS AS ins
-                ON mm.STRTRACKINGNUMBER = ins.STRTRACKINGNUMBER
-WHERE mm.STREVENTTYPE = '02'
-  AND mm.STRDELETE IS NULL
-
-UNION ALL
-
-/* PCE*/
-SELECT CONCAT('GA000A0000', SUBSTRING(mm.STRAIRSNUMBER, 3, 10),
-              RIGHT(CONCAT('00000', afs.STRAFSACTIONNUMBER), 5)) AS EDTID,
-       CAST(mm.STRTRACKINGNUMBER AS varchar(6))                  AS IAIPID,
-       'PFF'                                                     AS InspectionTypeCode
-FROM dbo.AFSSSCPRECORDS AS afs
-     INNER JOIN dbo.SSCPITEMMASTER AS mm
-                ON mm.STRTRACKINGNUMBER = afs.STRTRACKINGNUMBER
-WHERE mm.STREVENTTYPE IN ('01', '05')
-  AND mm.STRDELETE IS NULL
-
-UNION ALL
-
-/* Stack test*/
-SELECT CONCAT('GA000A0000', SUBSTRING(mm.STRAIRSNUMBER, 3, 10),
-              RIGHT(CONCAT('00000', afs.STRAFSACTIONNUMBER), 5)) AS EDTID,
-       CAST(mm.STRTRACKINGNUMBER AS varchar(6))                  AS IAIPID,
-       'CST'                                                     AS InspectionTypeCode
-FROM dbo.SSCPITEMMASTER AS mm
-     INNER JOIN dbo.SSCPTESTREPORTS AS st
-                ON mm.STRTRACKINGNUMBER = st.STRTRACKINGNUMBER
-     INNER JOIN dbo.AFSISMPRECORDS AS afs
-                ON st.STRREFERENCENUMBER = afs.STRREFERENCENUMBER
-WHERE mm.STREVENTTYPE = '03'
-  AND mm.STRDELETE IS NULL
-
-UNION ALL
-
-/* Enforcement */
-
-/* NOV*/
-SELECT CONCAT('GA000A0000', SUBSTRING(STRAIRSNUMBER, 3, 10),
-              RIGHT(CONCAT('00000', STRAFSNOVSENTNUMBER), 5)) AS EDTID,
-       CAST(STRENFORCEMENTNUMBER AS varchar(6))               AS IAIPID,
-       'ENFORCEMENTACTION'                                    AS IDCategory
-FROM dbo.SSCP_AUDITEDENFORCEMENT
-WHERE STRNOVSENT = 'True'
-  AND STRAFSNOVSENTNUMBER IS NOT NULL
-  AND STRAFSKEYACTIONNUMBER IS NOT NULL
-  and (IsDeleted = 0 or IsDeleted is null)
-
-UNION ALL
-
-/* CO*/
-SELECT CONCAT('GA000A0000', SUBSTRING(STRAIRSNUMBER, 3, 10),
-              RIGHT(CONCAT('00000', STRAFSCOEXECUTEDNUMBER), 5)) AS EDTID,
-       CAST(STRENFORCEMENTNUMBER AS varchar(6))                  AS IAIPID,
-       'ENFORCEMENTACTION'                                       AS IDCategory
-FROM dbo.SSCP_AUDITEDENFORCEMENT
-WHERE STRCOEXECUTED = 'True'
-  AND STRAFSCOEXECUTEDNUMBER IS NOT NULL
-  AND STRAFSKEYACTIONNUMBER IS NOT NULL
-  and (IsDeleted = 0 or IsDeleted is null)
-
-UNION ALL
-
-/* AO*/
-SELECT CONCAT('GA000A0000', SUBSTRING(STRAIRSNUMBER, 3, 10),
-              RIGHT(CONCAT('00000', STRAFSAOTOAGNUMBER), 5)) AS EDTID,
-       CAST(STRENFORCEMENTNUMBER AS varchar(6))              AS IAIPID,
-       'ENFORCEMENTACTION'                                   AS IDCategory
-FROM dbo.SSCP_AUDITEDENFORCEMENT
-WHERE STRAOEXECUTED = 'True'
-  AND STRAFSAOTOAGNUMBER IS NOT NULL
-  AND STRAFSKEYACTIONNUMBER IS NOT NULL
-  and (IsDeleted = 0 or IsDeleted is null)
+GO
