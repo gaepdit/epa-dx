@@ -1,20 +1,20 @@
-﻿USE airbranch;
+﻿USE AirWeb
 GO
 
-CREATE OR ALTER VIEW etl.VW_ICIS_COMPLIANCEMONITORING
+CREATE OR ALTER VIEW etl.VW_ICIS_ComplianceMonitoring
 AS
 
 /**************************************************************************************************
 
 Author:     Doug Waldron
-Overview:
-  This view organizes Compliance Monitoring information for use by the etl.ICIS_CASEFILE_UPDATE
-  and etl.ICIS_CM_UPDATE stored procedures.
+Overview:   This view organizes Compliance Monitoring information for use by the
+            etl.ICIS_ComplianceMonitoring_Update stored procedure.
 
 Modification History:
 When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2024-09-17  DWaldron            Reformatted
+2026-02-02  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
 
 ***************************************************************************************************/
 

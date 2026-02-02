@@ -1,7 +1,7 @@
-﻿USE airbranch;
+﻿USE AIRBRANCH
 GO
 
-CREATE OR ALTER PROCEDURE iaip_facility.TriggerDataUpdateAtEPA
+CREATE OR ALTER PROCEDURE etl.TriggerDataUpdateAtEPA
     @AirsNumber varchar(max)
 AS
 

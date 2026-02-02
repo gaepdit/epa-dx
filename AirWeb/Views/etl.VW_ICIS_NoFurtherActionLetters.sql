@@ -7,9 +7,8 @@ as
 /**************************************************************************************************
 
 Author:     Doug Waldron
-Overview:
-  This view organizes information for No Further Action Letters for use by the
-  etl.ICIS_CaseFile_Updates stored procedure.
+Overview:   This view organizes information for No Further Action Letters for use by the
+            etl.ICIS_CaseFile_Update stored procedure.
 
 Modification History:
 When        Who                 What

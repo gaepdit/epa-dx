@@ -1,0 +1,34 @@
+-- Triggers
+drop trigger AIRBRANCH.dbo.TG_AFS_FCE;
+drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPACCS;
+drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPFCE;
+drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPFCEMASTER;
+drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPINSPECTIONS;
+drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPITEMMASTER;
+drop trigger AIRBRANCH.dbo.TG_SSCPITEMMASTER_DEL;
+drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPTESTREPORTS;
+drop trigger AIRBRANCH.dbo.TG_ICIS_ISMPREPORTINFORMATION;
+drop trigger AIRBRANCH.dbo.TG_ICIS_CASEFILE;
+drop trigger AIRBRANCH.dbo.TG_SSCP_AUDITEDENFORCEMENT;
+drop trigger AIRBRANCH.dbo.TG_SSCP_EnforcementEvents_DEL;
+drop trigger AIRBRANCH.dbo.TG_ICIS_CASEFILE_CODES;
+drop trigger AIRBRANCH.dbo.TG_SSCPFCEMASTER_DEL;
+
+-- Procedures
+drop procedure AIRBRANCH.etl.ICIS_CASEFILE_DELETE;
+drop procedure AIRBRANCH.etl.ICIS_CASEFILE_UPDATE;
+drop procedure AIRBRANCH.etl.ICIS_CF2CM_DELETE;
+drop procedure AIRBRANCH.etl.ICIS_CM_DELETE;
+drop procedure AIRBRANCH.etl.ICIS_CM_UPDATE;
+drop procedure AIRBRANCH.etl.ICIS_EAMILESTONE_DELETE;
+
+-- Views
+drop view AIRBRANCH.dbo.VW_ICIS_AIRFACILITY;
+drop view AIRBRANCH.dbo.VW_ICIS_CASEFILE;
+drop view AIRBRANCH.dbo.VW_ICIS_COMPLIANCEMONITORING;
+drop view AIRBRANCH.dbo.VW_ICIS_ENFORCEMENTACTION;
+drop view AIRBRANCH.dbo.VW_ICIS_ID_REFERENCE;
+
+-- Functions
+drop function AIRBRANCH.etl.FormatEpaAirComplianceId
+drop function AIRBRANCH.etl.FormatEpaAirFacilityId

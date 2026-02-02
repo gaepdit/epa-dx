@@ -1,7 +1,7 @@
-USE airbranch;
-GO
+use AirWeb
+go
 
-CREATE OR ALTER PROCEDURE etl.ICIS_CM_UPDATE
+create or alter procedure etl.ICIS_ComplianceMonitoring_Update
 AS
 
 /**************************************************************************************************
@@ -21,7 +21,7 @@ Previously  DWaldron            Initially created in Oracle
 2016-12-28  VDhande             Migrated to SQL Server
 2018-08-02  DWaldron            Exclude closed air program codes (DX-86)
 2019-02-13  DWaldron            Include SIP air program with CM event if no others exist (DX-107)
-2026-01-20  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
+2026-02-02  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
 
 ***************************************************************************************************/
 

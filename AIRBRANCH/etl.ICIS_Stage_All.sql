@@ -25,11 +25,11 @@ BEGIN TRY
     print 'executing etl.ICIS_CMS_UPDATE';
     EXEC etl.ICIS_CMS_UPDATE;
 
-    print 'executing etl.ICIS_CM_UPDATE';
-    EXEC etl.ICIS_CM_UPDATE;
+    print 'executing AirWeb.etl.ICIS_ComplianceMonitoring_Update';
+    EXEC AirWeb.etl.ICIS_ComplianceMonitoring_Update;
 
-    print 'executing etl.ICIS_CASEFILE_UPDATE';
-    EXEC etl.ICIS_CASEFILE_UPDATE;
+    print 'executing AirWeb.etl.ICIS_CaseFile_Update';
+    EXEC AirWeb.etl.ICIS_CaseFile_Update;
 
     print 'executing etl.ICIS_CF2CM_DELETE';
     EXEC etl.ICIS_CF2CM_DELETE;
