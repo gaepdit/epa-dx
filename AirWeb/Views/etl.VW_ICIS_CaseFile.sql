@@ -1,8 +1,8 @@
-﻿use AirWeb
-go
+﻿USE AirWeb
+GO
 
-create or alter view etl.VW_ICIS_CaseFile
-as
+CREATE OR ALTER VIEW etl.VW_ICIS_CaseFile
+AS
 
 /**************************************************************************************************
 
@@ -21,7 +21,6 @@ When        Who                 What
 select etl.EpaActionId(c.FacilityId, c.ActionNumber) as CaseFileId,
        etl.EpaFacilityId(c.FacilityId)                   as AirFacilityId,
        concat('GA EPD Enforcement Case ID ', c.Id)                as CaseFileName,
-       'ST2'                                                      as LeadAgencyCode,
        iif(exists(select 1
                   from AirWeb.dbo.EnforcementActions e
                   where e.CaseFileId = c.Id
@@ -57,4 +56,4 @@ where c.IsDeleted = 0
                 and e.IsDeleted = 0
                 and e.IsReportableAction = 1);
 
-go
+GO

@@ -1,8 +1,8 @@
-﻿use AirWeb
-go
+﻿USE AirWeb
+GO
 
-create or alter view etl.VW_ICIS_CaseFileComplianceEvents
-as
+CREATE OR ALTER VIEW etl.VW_ICIS_CaseFileComplianceEvents
+AS
 
 /**************************************************************************************************
 
@@ -31,4 +31,4 @@ where c.IsDeleted = 0
   and w.IsDeleted = 0
   and w.ActionNumber is not null;
 
-go
+GO

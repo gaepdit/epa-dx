@@ -1,7 +1,7 @@
-use AirWeb
-go
+USE AirWeb
+GO
 
-create or alter procedure etl.ICIS_CaseFile_Update
+CREATE OR ALTER PROCEDURE etl.ICIS_CaseFile_Update
 as
 
 /**************************************************************************************************
@@ -47,10 +47,9 @@ Previously  DWaldron            Initially created in Oracle
 
 ***************************************************************************************************/
 
-    set xact_abort, nocount on
-begin try
-
-    begin transaction;
+    SET XACT_ABORT, NOCOUNT ON;
+BEGIN TRY
+    BEGIN TRANSACTION;
 
     --============================================================================================
     -- Case Files
@@ -66,7 +65,6 @@ begin try
            FrvDeterminationDate,
            HpvDayZeroDate,
            GaFacilityId as CaseFileUserDefinedField3,
-           LeadAgencyCode,
            AirPrograms,
            PollutantIds,
            AirWebId
@@ -86,11 +84,10 @@ begin try
     -- Insert new Case Files
     insert into NETWORKNODEFLOW.dbo.CaseFile
     (CaseFileId, CaseFileName, LeadAgencyCode, AirFacilityId, SensitiveDataIndicator,
-     AdvisementMethodTypeCode,
-     AdvisementMethodDate, CaseFileUserDefinedField3, TransactionID)
+     AdvisementMethodTypeCode, AdvisementMethodDate, CaseFileUserDefinedField3, TransactionID)
     select u.CaseFileId,
            u.CaseFileName,
-           u.LeadAgencyCode,
+           'ST2'   as LeadAgencyCode,
            u.AirFacilityId,
            u.SensitiveDataIndicator,
            u.AdvisementMethodTypeCode,
@@ -145,9 +142,9 @@ begin try
            FrvDeterminationDate as FRVDETERMINATIONDATE,
            HpvDayZeroDate       as HPVDAYZERODATE
     from #CaseFileUpdates
-        -- ↓ Pollutant Code max length 10 from XML Schema
+        -- ↓ Pollutant Code max length is 10 from XML Schema
         outer apply openjson(PollutantIds) with (PollutantCode nvarchar(10) '$')
-        -- ↓ Program Code max length 9 from XML Schema
+        -- ↓ Program Code max length is 9 from XML Schema
         outer apply openjson(AirPrograms) with (ProgramCode nvarchar(9) '$');
 
     --============================================================================================
@@ -305,7 +302,7 @@ begin try
     where exists (select 1
                   from #AllEaUpdates u
                   where u.EnforcementActionId = t.ENFORCEMENTACTIONID
-                    and t.CODENAME in (N'ProgramsViolatedCode', N'AirPollutantCode'));
+                    and t.CODENAME in ('ProgramsViolatedCode', 'AirPollutantCode'));
 
     insert into NETWORKNODEFLOW.dbo.ENFORCEMENTACTIONCODE
     (ENFORCEMENTACTIONCODEID, ENFORCEMENTACTIONID, CODENAME, CODEVALUE)
@@ -457,17 +454,10 @@ begin try
     from AirWeb.dbo.CaseFiles u
     where exists (select 1
                   from #CaseFileUpdates t
-                  where t.AirWebId = u.Id
-                    and u.DataExchangeStatus = 'U');
-
-    update u
-    set DataExchangeStatus     = 'P',
-        DataExchangeStatusDate = sysdatetimeoffset()
-    from AirWeb.dbo.CaseFiles u
-    where exists (select 1
+                  where t.AirWebId = u.Id)
+       or exists (select 1
                   from #CaseFileToCmUpdates t
-                  where t.AirWebId = u.Id
-                    and u.DataExchangeStatus = 'U');
+                  where t.AirWebId = u.Id);
 
     update u
     set DataExchangeStatus     = 'P',
@@ -475,29 +465,21 @@ begin try
     from AirWeb.dbo.EnforcementActions u
     where exists (select 1
                   from #AllEaUpdates t
-                  where t.AirWebId = u.Id
-                    and u.DataExchangeStatus = 'U');
-
-    update u
-    set DataExchangeStatus     = 'P',
-        DataExchangeStatusDate = sysdatetimeoffset()
-    from AirWeb.dbo.EnforcementActions u
-    where exists (select 1
+                  where t.AirWebId = u.Id)
+       or exists (select 1
                   from #NoFurtherAction t
-                  where t.AirWebId = u.Id
-                    and u.DataExchangeStatus = 'U');
+                  where t.AirWebId = u.Id);
 
-    commit transaction;
-
-    return 0;
-end try
-begin catch
-    if @@trancount > 0
-        rollback transaction;
-    declare
-        @ErrorMessage nvarchar(4000) = error_message(),
-        @ErrorSeverity int = error_severity();
-    raiserror (@ErrorMessage, @ErrorSeverity, 1);
-    return -1;
-end catch
-go
+    COMMIT TRANSACTION;
+    RETURN 0;
+END TRY
+BEGIN CATCH
+    IF @@trancount > 0
+        ROLLBACK TRANSACTION;
+    DECLARE
+        @ErrorMessage nvarchar(4000) = ERROR_MESSAGE(),
+        @ErrorSeverity int = ERROR_SEVERITY();
+    RAISERROR (@ErrorMessage, @ErrorSeverity, 1);
+    RETURN -1;
+END CATCH
+GO

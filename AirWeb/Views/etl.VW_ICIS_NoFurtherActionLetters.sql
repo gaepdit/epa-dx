@@ -1,8 +1,8 @@
-﻿use AirWeb
-go
+﻿USE AirWeb
+GO
 
-create or alter view etl.VW_ICIS_NoFurtherActionLetters
-as
+CREATE OR ALTER VIEW etl.VW_ICIS_NoFurtherActionLetters
+AS
 
 /**************************************************************************************************
 
@@ -33,4 +33,4 @@ where e.IsDeleted = 0
               from NETWORKNODEFLOW.dbo.AirFacility t
               where t.AirFacilityID = etl.EpaFacilityId(e.FacilityId));
 
-go
+GO
