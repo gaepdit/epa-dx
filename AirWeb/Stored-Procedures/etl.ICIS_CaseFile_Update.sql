@@ -23,12 +23,9 @@ Tables written to:
   - NETWORKNODEFLOW.dbo.EnforcementActionMilestone
   - NETWORKNODEFLOW.dbo.OTHERPATHWAYACTIVITYDATA
 
-Views read from:
-  - etl.VW_ICIS_CaseFile
-  - etl.VW_ICIS_CaseFileComplianceEvents
-  - etl.VW_ICIS_InformalEnforcementAction
-  - etl.VW_ICIS_FormalEnforcementAction
-  - etl.VW_ICIS_NoFurtherActionLetters
+Plus data exchange status reset in:
+  - AirWeb.dbo.CaseFiles
+  - AirWeb.dbo.EnforcementActions
 
 Modification History:
 When        Who                 What
@@ -54,7 +51,6 @@ BEGIN TRY
     --============================================================================================
     -- Case Files
 
-    -- Get data for Case Files with updates
     select CaseFileId,
            AirFacilityId,
            CaseFileName,
@@ -177,7 +173,6 @@ BEGIN TRY
     --============================================================================================
     -- Enforcement Actions
 
-    -- Get Enforcement Actions with updates
     select EnforcementActionId,
            AirFacilityId,
            EnforcementActionTypeCode,
@@ -263,8 +258,7 @@ BEGIN TRY
 
     insert into NETWORKNODEFLOW.dbo.EnforcementAction
     (EnforcementActionId, EnforcementActionTypeCode, EnforcementActionName, Forum, EAUserDefinedField3,
-     LeadAgencyCode,
-     Type, TransactionID)
+     LeadAgencyCode, Type, TransactionID)
     select u.EnforcementActionId,
            iif(u.ActionType = N'ConsentOrder', N'SCAAAO', N'CIV') as EnforcementActionTypeCode,
            u.EnforcementActionName,
@@ -323,7 +317,7 @@ BEGIN TRY
         cross apply openjson(PollutantIds);
 
     -- Insert Enforcement Action Type Code
-    -- (No update or delete needed Enforcement Action Type can't be changed)
+    -- (No update or delete needed because Enforcement Action Type can't be changed)
     insert into NETWORKNODEFLOW.dbo.ENFORCEMENTACTIONCODE
     (ENFORCEMENTACTIONCODEID, ENFORCEMENTACTIONID, CODENAME, CODEVALUE)
     select newid()                     as ENFORCEMENTACTIONCODEID,
@@ -354,7 +348,7 @@ BEGIN TRY
            u.FinalOrderIssuedEnteredDate,
            u.AirEnforcementActionResolvedDate,
            u.CashCivilPenaltyRequiredAmount,
-           -- ↓ Currently GA only issues one final order for any Case File:
+           -- ↓ GA only issues one final order for any Case File:
            1                                                   as FinalOrderIdentifier
     from #FormalEaUpdates u
     where not exists (select 1

@@ -1,34 +1,47 @@
 -- Triggers
-drop trigger AIRBRANCH.dbo.TG_AFS_FCE;
-drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPACCS;
-drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPFCE;
-drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPFCEMASTER;
-drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPINSPECTIONS;
-drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPITEMMASTER;
-drop trigger AIRBRANCH.dbo.TG_SSCPITEMMASTER_DEL;
-drop trigger AIRBRANCH.dbo.TG_ICIS_SSCPTESTREPORTS;
-drop trigger AIRBRANCH.dbo.TG_ICIS_ISMPREPORTINFORMATION;
-drop trigger AIRBRANCH.dbo.TG_ICIS_CASEFILE;
-drop trigger AIRBRANCH.dbo.TG_SSCP_AUDITEDENFORCEMENT;
-drop trigger AIRBRANCH.dbo.TG_SSCP_EnforcementEvents_DEL;
-drop trigger AIRBRANCH.dbo.TG_ICIS_CASEFILE_CODES;
-drop trigger AIRBRANCH.dbo.TG_SSCPFCEMASTER_DEL;
+begin
+    use AIRBRANCH;
+    drop trigger dbo.TG_AFS_FCE;
+    drop trigger dbo.TG_ICIS_SSCPACCS;
+    drop trigger dbo.TG_ICIS_SSCPFCE;
+    drop trigger dbo.TG_ICIS_SSCPFCEMASTER;
+    drop trigger dbo.TG_ICIS_SSCPINSPECTIONS;
+    drop trigger dbo.TG_ICIS_SSCPITEMMASTER;
+    drop trigger dbo.TG_SSCPITEMMASTER_DEL;
+    drop trigger dbo.TG_ICIS_SSCPTESTREPORTS;
+    drop trigger dbo.TG_ICIS_ISMPREPORTINFORMATION;
+    drop trigger dbo.TG_ICIS_CASEFILE;
+    drop trigger dbo.TG_SSCP_AUDITEDENFORCEMENT;
+    drop trigger dbo.TG_SSCP_EnforcementEvents_DEL;
+    drop trigger dbo.TG_ICIS_CASEFILE_CODES;
+    drop trigger dbo.TG_SSCPFCEMASTER_DEL;
+
+end
 
 -- Procedures
-drop procedure AIRBRANCH.etl.ICIS_CASEFILE_DELETE;
-drop procedure AIRBRANCH.etl.ICIS_CASEFILE_UPDATE;
-drop procedure AIRBRANCH.etl.ICIS_CF2CM_DELETE;
-drop procedure AIRBRANCH.etl.ICIS_CM_DELETE;
-drop procedure AIRBRANCH.etl.ICIS_CM_UPDATE;
-drop procedure AIRBRANCH.etl.ICIS_EAMILESTONE_DELETE;
+begin
+    use AIRBRANCH;
+    drop procedure etl.ICIS_CASEFILE_DELETE;
+    drop procedure etl.ICIS_CASEFILE_UPDATE;
+    drop procedure etl.ICIS_CF2CM_DELETE;
+    drop procedure etl.ICIS_CM_DELETE;
+    drop procedure etl.ICIS_CM_UPDATE;
+    drop procedure etl.ICIS_EAMILESTONE_DELETE;
+end
 
 -- Views
-drop view AIRBRANCH.dbo.VW_ICIS_AIRFACILITY;
-drop view AIRBRANCH.dbo.VW_ICIS_CASEFILE;
-drop view AIRBRANCH.dbo.VW_ICIS_COMPLIANCEMONITORING;
-drop view AIRBRANCH.dbo.VW_ICIS_ENFORCEMENTACTION;
-drop view AIRBRANCH.dbo.VW_ICIS_ID_REFERENCE;
+begin
+    use AIRBRANCH;
+    drop view dbo.VW_ICIS_AIRFACILITY;
+    drop view dbo.VW_ICIS_CASEFILE;
+    drop view dbo.VW_ICIS_COMPLIANCEMONITORING;
+    drop view dbo.VW_ICIS_ENFORCEMENTACTION;
+    drop view dbo.VW_ICIS_ID_REFERENCE;
+end
 
 -- Functions
-drop function AIRBRANCH.etl.FormatEpaAirComplianceId
-drop function AIRBRANCH.etl.FormatEpaAirFacilityId
+begin
+    use AIRBRANCH;
+    drop function etl.FormatEpaAirComplianceId
+    drop function etl.FormatEpaAirFacilityId
+end

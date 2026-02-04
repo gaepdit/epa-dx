@@ -1,4 +1,4 @@
-USE airbranch;
+USE AIRBRANCH
 GO
 
 CREATE OR ALTER PROCEDURE etl.ICIS_Stage_All
@@ -13,6 +13,7 @@ Modification History:
 When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2016-12-08  DWaldron            Init
+2026-02-04  DWaldron            Update with changes for the new Air Web App (epa-dx#2)
 
 ***************************************************************************************************/
 
@@ -28,20 +29,14 @@ BEGIN TRY
     print 'executing AirWeb.etl.ICIS_ComplianceMonitoring_Update';
     EXEC AirWeb.etl.ICIS_ComplianceMonitoring_Update;
 
+    print 'executing AirWeb.etl.ICIS_ComplianceMonitoring_Delete';
+    EXEC AirWeb.etl.ICIS_ComplianceMonitoring_Delete;
+
     print 'executing AirWeb.etl.ICIS_CaseFile_Update';
     EXEC AirWeb.etl.ICIS_CaseFile_Update;
 
-    print 'executing etl.ICIS_CF2CM_DELETE';
-    EXEC etl.ICIS_CF2CM_DELETE;
-
-    print 'executing etl.ICIS_EAMILESTONE_DELETE';
-    EXEC etl.ICIS_EAMILESTONE_DELETE;
-
-    print 'executing etl.ICIS_CASEFILE_DELETE';
-    EXEC etl.ICIS_CASEFILE_DELETE;
-
-    print 'executing etl.ICIS_CM_DELETE';
-    EXEC etl.ICIS_CM_DELETE;
+    print 'executing AirWeb.etl.ICIS_CaseFile_Delete';
+    EXEC AirWeb.etl.ICIS_CaseFile_Delete;
 
     print 'executing etl.ICIS_CMS_DELETE';
     EXEC etl.ICIS_CMS_DELETE;

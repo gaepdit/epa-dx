@@ -4,21 +4,20 @@
 
 | Data element                      | Action | Complete | Tested |
 |-----------------------------------|--------|:--------:|:------:|
-| Case File                         | Insert |    ✓     |        |
-| Case File                         | Update |    ✓     |        |
-| Case File                         | Delete |          |        |
-| Case File Air Violation codes     | Insert |    ✓     |        |
-| Case File Air Violation codes     | Delete |    ✓     |        |
-| Case File Program/Pollutant codes | Insert |    ✓     |        |
-| Case File Program/Pollutant codes | Delete |    ✓     |        |
-| Case File/CM Linkage              | Insert |    ✓     |        |
-| Case File/CM Linkage              | Delete |    ✓     |        |
-| Enforcement Action - Formal       | Insert |    ✓     |        |
-| Enforcement Action - Formal       | Update |    ✓     |        |
-| Enforcement Action - Formal       | Delete |          |        |
-| Enforcement Action - Informal     | Insert |    ✓     |        |
-| Enforcement Action - Informal     | Update |    ✓     |        |
-| Enforcement Action - Informal     | Delete |          |        |
+| Case File                         | Insert |    ✓     |   ✓    |
+| Case File                         | Update |    ✓     |   ✓    |
+| Case File                         | Delete |    ✓     |        |
+| Case File Air Violation codes     | Insert |    ✓     |   ✓    |
+| Case File Air Violation codes     | Delete |    ✓     |   ✓    |
+| Case File Program/Pollutant codes | Insert |    ✓     |   ✓    |
+| Case File Program/Pollutant codes | Delete |    ✓     |   ✓    |
+| Case File/CM Linkage              | Insert |    ✓     |   ✓    |
+| Case File/CM Linkage              | Delete |    ✓     |   ✓    |
+| Enforcement Action - Formal       | Insert |    ✓     |   ✓    |
+| Enforcement Action - Formal       | Update |    ✓     |   ✓    |
+| Enforcement Action - Informal     | Insert |    ✓     |   ✓    |
+| Enforcement Action - Informal     | Update |    ✓     |   ✓    |
+| Enforcement Action                | Delete |    ✓     |        |
 | EA Facility                       | Insert |    ✓     |        |
 | Case File/EA Linkage              | Insert |    ✓     |        |
 | EA Program/Pollutant codes        | Insert |    ✓     |        |
@@ -26,11 +25,10 @@
 | EA Type code                      | Insert |    ✓     |        |
 | Final Orders                      | Insert |    ✓     |        |
 | Final Orders                      | Update |    ✓     |        |
-| Final Orders                      | Delete |          |        |
 | Final Order Facility              | Insert |    ✓     |        |
 | AO Milestones                     | Insert |    ✓     |        |
 | AO Milestones                     | Update |    ✓     |        |
-| AO Milestones                     | Delete |          |        |
+| AO Milestones                     | Delete |    ✓     |        |
 | NFA Pathway Activities            | Insert |    ✓     |        |
 | NFA Pathway Activities            | Delete |    ✓     |        |
 
@@ -38,23 +36,23 @@
 
 | Data element                        | Action | Complete | Tested |
 |-------------------------------------|--------|:--------:|:------:|
-| Compliance Monitoring               | Insert |    ✓     |        |
-| Compliance Monitoring               | Update |    ✓     |        |
-| Compliance Monitoring               | Delete |          |        |
-| Compliance Monitoring Program Codes | Insert |    ✓     |        |
-| Compliance Monitoring Program Codes | Delete |    ✓     |        |
-| Compliance Monitoring ACC data      | Insert |    ✓     |        |
-| Compliance Monitoring ACC data      | Update |    ✓     |        |
-| Compliance Monitoring ACC data      | Delete |          |        |
-| IAIP stack test data                | Insert |    ✓     |        |
-| IAIP stack test data                | Update |    ✓     |        |
-| IAIP stack test data                | Delete |          |        |
+| Compliance Monitoring               | Insert |    ✓     |   ✓    |
+| Compliance Monitoring               | Update |    ✓     |   ✓    |
+| Compliance Monitoring               | Delete |    ✓     |        |
+| Compliance Monitoring FCE           | Insert |    ✓     |   ✓    |
+| Compliance Monitoring FCE           | Update |    ✓     |   ✓    |
+| Compliance Monitoring FCE           | Delete |    ✓     |        |
+| Compliance Monitoring Program Codes | Insert |    ✓     |   ✓    |
+| Compliance Monitoring Program Codes | Delete |    ✓     |   ✓    |
+| Compliance Monitoring ACC data      | Insert |    ✓     |   ✓    |
+| Compliance Monitoring ACC data      | Update |    ✓     |   ✓    |
+| IAIP stack test data                | Insert |    ✓     |   ✓    |
+| IAIP stack test data                | Update |    ✓     |   ✓    |
 
 ## Old DB objects to review
 
 | Done | Repo        | Database object                                                        | Type    | Modification |
 |:----:|-------------|------------------------------------------------------------------------|---------|--------------|
-|  ✓   | `air-web`   | `AIRBRANCH.air.GetIaipFacilityNextActionNumber`                        | Proc    | New          |
 |  ✓   | `airbranch` | `AIRBRANCH.dbo.ICIS_CASEFILE_CODES / TG_ICIS_CASEFILE_CODES`           | Trigger | Obsolete     |
 |      | `airbranch` | `AIRBRANCH.dbo.ISMPREPORTINFORMATION / TG_ICIS_ISMPREPORTINFORMATION`  | Trigger | Refactor     |
 |  ✓   | `airbranch` | `AIRBRANCH.dbo.ISMPREPORTINFORMATION / TG_ISMPREPORTINFORMATION_DEL`   | Trigger | Refactor     |
@@ -75,12 +73,12 @@
 |  ✓   | `airbranch` | `AIRBRANCH.dbo.VW_ICIS_ENFORCEMENTACTION`                              | View    | Rewrite      |
 |  ✓   | `airbranch` | `AIRBRANCH.dbo.VW_ICIS_ID_REFERENCE`                                   | View    | Rewrite      |
 |  ✓   | `airbranch` | `AIRBRANCH.iaip_facility.TriggerDataUpdateAtEPA`                       | Proc    | Rewrite      |
-|      | `epa-dx`    | `AIRBRANCH.etl.ICIS_CASEFILE_DELETE`                                   | Proc    | Rewrite      |
+|  ✓   | `epa-dx`    | `AIRBRANCH.etl.ICIS_CASEFILE_DELETE`                                   | Proc    | Rewrite      |
 |  ✓   | `epa-dx`    | `AIRBRANCH.etl.ICIS_CASEFILE_UPDATE`                                   | Proc    | Rewrite      |
-|      | `epa-dx`    | `AIRBRANCH.etl.ICIS_CF2CM_DELETE`                                      | Proc    | Rewrite      |
-|      | `epa-dx`    | `AIRBRANCH.etl.ICIS_CM_DELETE`                                         | Proc    | Rewrite      |
+|  ✓   | `epa-dx`    | `AIRBRANCH.etl.ICIS_CF2CM_DELETE`                                      | Proc    | Rewrite      |
+|  ✓   | `epa-dx`    | `AIRBRANCH.etl.ICIS_CM_DELETE`                                         | Proc    | Rewrite      |
 |  ✓   | `epa-dx`    | `AIRBRANCH.etl.ICIS_CM_UPDATE`                                         | Proc    | Rewrite      |
-|      | `epa-dx`    | `AIRBRANCH.etl.ICIS_EAMILESTONE_DELETE`                                | Proc    | Rewrite      |
+|  ✓   | `epa-dx`    | `AIRBRANCH.etl.ICIS_EAMILESTONE_DELETE`                                | Proc    | Rewrite      |
 
 ## Obsolete DB tables
 

@@ -10,10 +10,14 @@ Author:     Doug Waldron
 Overview:   Stage Compliance Monitoring updates for ICIS-Air
 
 Tables written to:
-    NETWORKNODEFLOW.dbo.ComplianceMonitoring
-    NETWORKNODEFLOW.dbo.ComplianceMonitoringCode
-    NETWORKNODEFLOW.dbo.AirStackTestData
-    NETWORKNODEFLOW.dbo.TVACCReviewData
+  - NETWORKNODEFLOW.dbo.ComplianceMonitoring
+  - NETWORKNODEFLOW.dbo.ComplianceMonitoringCode
+  - NETWORKNODEFLOW.dbo.AirStackTestData
+  - NETWORKNODEFLOW.dbo.TVACCReviewData
+
+Plus data exchange status reset in:
+  - AirWeb.dbo.ComplianceWork
+  - AirWeb.dbo.Fces
 
 Modification History:
 When        Who                 What
