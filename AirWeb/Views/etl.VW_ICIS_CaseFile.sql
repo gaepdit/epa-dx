@@ -18,30 +18,31 @@ When        Who                 What
 
 ***************************************************************************************************/
 
-select etl.EpaActionId(c.FacilityId, c.ActionNumber) as CaseFileId,
-       etl.EpaFacilityId(c.FacilityId)                   as AirFacilityId,
-       concat('GA EPD Enforcement Case ID ', c.Id)                as CaseFileName,
+select etl.EpaActionId(c.FacilityId, c.ActionNumber)        as CaseFileId,
+       etl.EpaFacilityId(c.FacilityId)                      as AirFacilityId,
+       concat('GA EPD Enforcement Case ID ', c.Id)          as CaseFileName,
        iif(exists(select 1
                   from AirWeb.dbo.EnforcementActions e
                   where e.CaseFileId = c.Id
                     and e.IsReportableAction = 1
-                    and e.IssueDate is not null), 'N', 'Y')       as SensitiveDataIndicator,
-       i.IssueDate                                                as AdvisementMethodDate,
-       iif(i.IssueDate is null, null, 'LTR')                      as AdvisementMethodTypeCode,
+                    and e.IssueDate is not null), 'N', 'Y') as SensitiveDataIndicator,
+       i.IssueDate                                          as AdvisementMethodDate,
+       iif(i.IssueDate is null, null, 'LTR')                as AdvisementMethodTypeCode,
        c.ViolationTypeCode,
-       c.DayZero                                                  as FrvDeterminationDate,
-       iif(v.SeverityCode = 'HPV', c.DayZero, null)               as HpvDayZeroDate,
-       concat('Facility ID ', c.FacilityId)                       as GaFacilityId,
+       c.DayZero                                            as FrvDeterminationDate,
+       iif(v.SeverityCode = 'HPV', c.DayZero, null)         as HpvDayZeroDate,
+       concat('Facility ID ', c.FacilityId)                 as GaFacilityId,
        c.AirPrograms,
        c.PollutantIds,
-       c.Id                                                       as AirWebId,
+       c.Id                                                 as AirWebId,
        c.DataExchangeStatus
 from AirWeb.dbo.CaseFiles c
     left join AirWeb.dbo.ViolationTypes v
         on v.Code = c.ViolationTypeCode
     left join (select CaseFileId, min(IssueDate) as IssueDate
                from AirWeb.dbo.EnforcementActions
-               where ActionType in (N'NoticeOfViolation', N'ProposedConsentOrder', N'NovNfaLetter')
+               where ActionType in
+                     (N'NoticeOfViolation', N'ProposedConsentOrder', N'NovNfaLetter', N'ConsentOrder')
                  and IsDeleted = 0
                group by CaseFileId) i
         on i.CaseFileId = c.Id
