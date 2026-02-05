@@ -6,7 +6,7 @@
 |-----------------------------------|--------|:--------:|:------:|
 | Case File                         | Insert |    ✓     |   ✓    |
 | Case File                         | Update |    ✓     |   ✓    |
-| Case File                         | Delete |    ✓     |        |
+| Case File                         | Delete |    ✓     |   ✓    |
 | Case File Air Violation codes     | Insert |    ✓     |   ✓    |
 | Case File Air Violation codes     | Delete |    ✓     |   ✓    |
 | Case File Program/Pollutant codes | Insert |    ✓     |   ✓    |
@@ -17,20 +17,20 @@
 | Enforcement Action - Formal       | Update |    ✓     |   ✓    |
 | Enforcement Action - Informal     | Insert |    ✓     |   ✓    |
 | Enforcement Action - Informal     | Update |    ✓     |   ✓    |
-| Enforcement Action                | Delete |    ✓     |        |
-| EA Facility                       | Insert |    ✓     |        |
-| Case File/EA Linkage              | Insert |    ✓     |        |
-| EA Program/Pollutant codes        | Insert |    ✓     |        |
-| EA Program/Pollutant codes        | Delete |    ✓     |        |
-| EA Type code                      | Insert |    ✓     |        |
-| Final Orders                      | Insert |    ✓     |        |
-| Final Orders                      | Update |    ✓     |        |
-| Final Order Facility              | Insert |    ✓     |        |
-| AO Milestones                     | Insert |    ✓     |        |
-| AO Milestones                     | Update |    ✓     |        |
-| AO Milestones                     | Delete |    ✓     |        |
-| NFA Pathway Activities            | Insert |    ✓     |        |
-| NFA Pathway Activities            | Delete |    ✓     |        |
+| Enforcement Action                | Delete |    ✓     |   ✓    |
+| EA Facility                       | Insert |    ✓     |   x    |
+| Case File/EA Linkage              | Insert |    ✓     |   x    |
+| EA Program/Pollutant codes        | Insert |    ✓     |   x    |
+| EA Program/Pollutant codes        | Delete |    ✓     |   x    |
+| EA Type code                      | Insert |    ✓     |   x    |
+| Final Orders                      | Insert |    ✓     |   x    |
+| Final Orders                      | Update |    ✓     |   x    |
+| Final Order Facility              | Insert |    ✓     |   x    |
+| AO Milestones                     | Insert |    ✓     |   x    |
+| AO Milestones                     | Update |    ✓     |   x    |
+| AO Milestones                     | Delete |    ✓     |   x    |
+| NFA Pathway Activities            | Insert |    ✓     |   x    |
+| NFA Pathway Activities            | Delete |    ✓     |   x    |
 
 ## Compliance Monitoring data elements
 
