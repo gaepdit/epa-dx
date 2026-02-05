@@ -38,23 +38,24 @@
 |-------------------------------------|--------|:--------:|:------:|
 | Compliance Monitoring               | Insert |    ✓     |   ✓    |
 | Compliance Monitoring               | Update |    ✓     |   ✓    |
-| Compliance Monitoring               | Delete |    ✓     |        |
+| Compliance Monitoring               | Delete |    ✓     |   ✓    |
 | Compliance Monitoring FCE           | Insert |    ✓     |   ✓    |
 | Compliance Monitoring FCE           | Update |    ✓     |   ✓    |
-| Compliance Monitoring FCE           | Delete |    ✓     |        |
+| Compliance Monitoring FCE           | Delete |    ✓     |   ✓    |
 | Compliance Monitoring Program Codes | Insert |    ✓     |   ✓    |
 | Compliance Monitoring Program Codes | Delete |    ✓     |   ✓    |
 | Compliance Monitoring ACC data      | Insert |    ✓     |   ✓    |
 | Compliance Monitoring ACC data      | Update |    ✓     |   ✓    |
 | IAIP stack test data                | Insert |    ✓     |   ✓    |
-| IAIP stack test data                | Update |    ✓     |   ✓    |
+| IAIP stack test data                | Update |    ✓     |   x    |
+| IAIP stack test data                | Delete |    ✓     |   ✓    |
 
 ## Old DB objects to review
 
 | Done | Repo        | Database object                                                        | Type    | Modification |
 |:----:|-------------|------------------------------------------------------------------------|---------|--------------|
 |  ✓   | `airbranch` | `AIRBRANCH.dbo.ICIS_CASEFILE_CODES / TG_ICIS_CASEFILE_CODES`           | Trigger | Obsolete     |
-|      | `airbranch` | `AIRBRANCH.dbo.ISMPREPORTINFORMATION / TG_ICIS_ISMPREPORTINFORMATION`  | Trigger | Refactor     |
+|  ✓   | `airbranch` | `AIRBRANCH.dbo.ISMPREPORTINFORMATION / TG_ICIS_ISMPREPORTINFORMATION`  | Trigger | Refactor     |
 |  ✓   | `airbranch` | `AIRBRANCH.dbo.ISMPREPORTINFORMATION / TG_ISMPREPORTINFORMATION_DEL`   | Trigger | Refactor     |
 |  ✓   | `airbranch` | `AIRBRANCH.dbo.SSCP_AUDITEDENFORCEMENT / TG_ICIS_CASEFILE`             | Trigger | Obsolete     |
 |  ✓   | `airbranch` | `AIRBRANCH.dbo.SSCP_AUDITEDENFORCEMENT / TG_SSCP_AUDITEDENFORCEMENT`   | Trigger | Obsolete     |

@@ -9,12 +9,12 @@ begin
     drop trigger dbo.TG_ICIS_SSCPITEMMASTER;
     drop trigger dbo.TG_SSCPITEMMASTER_DEL;
     drop trigger dbo.TG_ICIS_SSCPTESTREPORTS;
-    drop trigger dbo.TG_ICIS_ISMPREPORTINFORMATION;
     drop trigger dbo.TG_ICIS_CASEFILE;
     drop trigger dbo.TG_SSCP_AUDITEDENFORCEMENT;
     drop trigger dbo.TG_SSCP_EnforcementEvents_DEL;
     drop trigger dbo.TG_ICIS_CASEFILE_CODES;
     drop trigger dbo.TG_SSCPFCEMASTER_DEL;
+    drop trigger dbo.TG_ISMPREPORTINFORMATION_DEL;
 
 end
 
