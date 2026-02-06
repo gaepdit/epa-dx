@@ -19,7 +19,7 @@
 | Enforcement Action - Informal     | Update |    ✓     |   ✓    |
 | Enforcement Action                | Delete |    ✓     |   ✓    |
 | EA Facility                       | Insert |    ✓     |   x    |
-| Case File/EA Linkage              | Insert |    ✓     |   x    |
+| Case File/EA Linkage              | Insert |    ✓     |   ✓    |
 | EA Program/Pollutant codes        | Insert |    ✓     |   x    |
 | EA Program/Pollutant codes        | Delete |    ✓     |   x    |
 | EA Type code                      | Insert |    ✓     |   x    |
@@ -80,27 +80,3 @@
 |  ✓   | `epa-dx`    | `AIRBRANCH.etl.ICIS_CM_DELETE`                                         | Proc    | Rewrite      |
 |  ✓   | `epa-dx`    | `AIRBRANCH.etl.ICIS_CM_UPDATE`                                         | Proc    | Rewrite      |
 |  ✓   | `epa-dx`    | `AIRBRANCH.etl.ICIS_EAMILESTONE_DELETE`                                | Proc    | Rewrite      |
-
-## Obsolete DB tables
-
-* `AFSISMPRECORDS`
-* `AFSSSCPFCERECORDS`
-* `AFSSSCPRECORDS`
-* `ICIS_CASEFILE_CODES`
-* `LK_VIOLATION_TYPE`
-* `LOOKUPCOMPLIANCEACTIVITIES`
-* `LOOKUPSSCPNOTIFICATIONS`
-* `SSCP_AUDITEDENFORCEMENT`
-* `SSCP_ENFORCEMENT`
-* `SSCP_EnforcementEvents`
-* `SSCPACCS`
-* `SSCPACCSHISTORY`
-* `SSCPENFORCEMENTSTIPULATED`
-* `SSCPFCE`
-* `SSCPFCEMASTER`
-* `SSCPINSPECTIONS`
-* `SSCPITEMMASTER`
-* `SSCPNOTIFICATIONS`
-* `SSCPREPORTS`
-* `SSCPREPORTSHISTORY`
-* `SSCPTESTREPORTS`
