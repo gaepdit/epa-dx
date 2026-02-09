@@ -24,6 +24,7 @@ select etl.EpaActionId(c.FacilityId, c.ActionNumber)            as ComplianceMon
        c.ClosedDate                                             as ComplianceMonitoringDate,
        concat('Facility ID ', c.FacilityId)                     as GaFacilityId,
        dateadd(dd, 1, c.ClosedDate)                             as TVACCReviewedDate,
+       c.ReportsDeviations                                      as FacilityReportDeviationsIndicator,
        AIRBRANCH.iaip_facility.DbFormatAirsNumber(c.FacilityId) as DbFormatAirsNumber,
        c.Id                                                     as AirWebId,
        c.DataExchangeStatus

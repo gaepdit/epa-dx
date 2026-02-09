@@ -83,6 +83,7 @@ BEGIN TRY
            ComplianceMonitoringDate,
            GaFacilityId as InspectionUserDefinedField3,
            TVACCReviewedDate,
+           FacilityReportDeviationsIndicator,
            DbFormatAirsNumber,
            AirWebId
     into #AccUpdates
@@ -232,14 +233,18 @@ BEGIN TRY
     -- ACCs
 
     update t
-    set TVACCReviewedDate = dateadd(dd, 1, u.TVACCReviewedDate)
+    set TVACCReviewedDate                 = dateadd(dd, 1, u.TVACCReviewedDate),
+        FacilityReportDeviationsIndicator = u.FacilityReportDeviationsIndicator
     from NETWORKNODEFLOW.dbo.TVACCReviewData t
         inner join #AccUpdates u
             on u.ComplianceMonitoringId = t.ComplianceMonitoringId;
 
     insert into NETWORKNODEFLOW.dbo.TVACCReviewData
-        (TVACCReviewedDate, ReviewerAgencyCode, ComplianceMonitoringId)
-    select TVACCReviewedDate as TVACCReviewedDate, 'STA' as ReviewerAgencyCode, ComplianceMonitoringId
+    (TVACCReviewedDate, FacilityReportDeviationsIndicator, ReviewerAgencyCode, ComplianceMonitoringId)
+    select TVACCReviewedDate as TVACCReviewedDate,
+           FacilityReportDeviationsIndicator,
+           'STA'             as ReviewerAgencyCode,
+           ComplianceMonitoringId
     from #AccUpdates u
     where not exists (select 1
                       from NETWORKNODEFLOW.dbo.TVACCReviewData t

@@ -19,7 +19,7 @@ When        Who                 What
 
 select etl.EpaActionId(c.FacilityId, c.ActionNumber)            as ComplianceMonitoringId,
        etl.EpaFacilityId(c.FacilityId)                          as AirFacilityID,
-       'CST'                                                   as InspectionTypeCode,
+       'CST'                                                    as InspectionTypeCode,
        concat('GA EPD Stack Test Report Review ID ', c.Id)      as ActivityName,
        convert(date, i.DATTESTDATEEND)                          as ComplianceMonitoringDate,
        l.ICIS_POLLUTANT_CODE                                    as AirPollutantCode,
@@ -29,8 +29,7 @@ select etl.EpaActionId(c.FacilityId, c.ActionNumber)            as ComplianceMon
        convert(date, i.DATRECEIVEDDATE)                         as ReportReceivedDate,
        case
            when i.STRCOMPLIANCESTATUS = '01' then 'PEN'
-           when i.STRCOMPLIANCESTATUS = '02' then 'PSS'
-           when i.STRCOMPLIANCESTATUS = '03' then 'PSS'
+           when i.STRCOMPLIANCESTATUS in ('02', '03') then 'PSS'
            when i.STRCOMPLIANCESTATUS = '04' then 'PNA'
            when i.STRCOMPLIANCESTATUS = '05' then 'FAI'
            end                                                  as StackTestStatusCode,
