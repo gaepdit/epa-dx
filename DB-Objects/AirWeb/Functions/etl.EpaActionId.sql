@@ -28,6 +28,9 @@ When        Who                 What
 
 BEGIN
 
+    if @actionNumber is null or @actionNumber = 0
+        return 'ERROR';
+
     if len(@airs) in (8, 12)
         return concat('GA000A000013', right(@airs, 8), right(concat('00000', @actionNumber), 5));
 
