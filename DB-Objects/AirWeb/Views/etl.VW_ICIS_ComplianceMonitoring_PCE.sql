@@ -1,7 +1,7 @@
 ﻿USE AirWeb
 GO
 
-CREATE OR ALTER VIEW etl.VW_ICIS_ComplianceMonitoring
+CREATE OR ALTER VIEW etl.VW_ICIS_ComplianceMonitoring_PCE
 AS
 
 /**************************************************************************************************

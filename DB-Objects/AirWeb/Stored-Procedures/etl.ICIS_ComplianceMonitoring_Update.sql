@@ -55,7 +55,7 @@ BEGIN TRY
            DbFormatAirsNumber,
            AirWebId
     into #ComplianceMonitoringUpdates
-    from etl.VW_ICIS_ComplianceMonitoring
+    from etl.VW_ICIS_ComplianceMonitoring_PCE
     where DataExchangeStatus = 'U';
 
     select ComplianceMonitoringId,
