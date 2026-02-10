@@ -1,6 +1,4 @@
-USE airbranch;
-GO
-SET ANSI_NULLS ON;
+USE AIRBRANCH
 GO
 
 CREATE OR ALTER VIEW etl.VW_AirProgramsWithSubparts

@@ -7,7 +7,7 @@ AS
 /**************************************************************************************************
 
 Author:     Doug Waldron
-Overview:   Returns a list of all EDT record IDs and associated airbranch IDs
+Overview:   Returns a list of all EDT record IDs and associated IAIP/AirWeb IDs
 
 Modification History:
 When        Who                 What
