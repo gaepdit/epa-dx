@@ -39,6 +39,7 @@ BEGIN TRY
            InspectionTypeCode,
            ActivityName,
            ComplianceMonitoringDate,
+           'DA'         AS MonitoringType,
            GaFacilityId as InspectionUserDefinedField3,
            DbFormatAirsNumber,
            AirWebId
@@ -51,6 +52,7 @@ BEGIN TRY
            InspectionTypeCode,
            ActivityName,
            ComplianceMonitoringDate,
+           'DA'         AS MonitoringType,
            GaFacilityId as InspectionUserDefinedField3,
            DbFormatAirsNumber,
            AirWebId
@@ -63,6 +65,7 @@ BEGIN TRY
            InspectionTypeCode,
            ActivityName,
            ComplianceMonitoringDate,
+           'DA'         AS MonitoringType,
            AirPollutantCode,
            GaFacilityId as InspectionUserDefinedField3,
            DbFormatAirsNumber,
@@ -81,6 +84,7 @@ BEGIN TRY
            InspectionTypeCode,
            ActivityName,
            ComplianceMonitoringDate,
+           'TVACC'         AS MonitoringType,
            GaFacilityId as InspectionUserDefinedField3,
            TVACCReviewedDate,
            FacilityReportDeviationsIndicator,
@@ -95,6 +99,7 @@ BEGIN TRY
            InspectionTypeCode,
            ActivityName,
            ComplianceMonitoringDate,
+           MonitoringType,
            AirPollutantCode,
            InspectionUserDefinedField3,
            DbFormatAirsNumber,
@@ -105,6 +110,7 @@ BEGIN TRY
                  InspectionTypeCode,
                  ActivityName,
                  ComplianceMonitoringDate,
+                 MonitoringType,
                  AirPollutantCode,
                  InspectionUserDefinedField3,
                  DbFormatAirsNumber,
@@ -116,6 +122,7 @@ BEGIN TRY
                  InspectionTypeCode,
                  ActivityName,
                  ComplianceMonitoringDate,
+                 MonitoringType,
                  null,
                  InspectionUserDefinedField3,
                  DbFormatAirsNumber,
@@ -127,6 +134,7 @@ BEGIN TRY
                  InspectionTypeCode,
                  ActivityName,
                  ComplianceMonitoringDate,
+                 MonitoringType,
                  null,
                  InspectionUserDefinedField3,
                  DbFormatAirsNumber,
@@ -138,6 +146,7 @@ BEGIN TRY
                  InspectionTypeCode,
                  ActivityName,
                  ComplianceMonitoringDate,
+                 MonitoringType,
                  null,
                  InspectionUserDefinedField3,
                  DbFormatAirsNumber,
@@ -158,7 +167,7 @@ BEGIN TRY
 
     insert into NETWORKNODEFLOW.dbo.ComplianceMonitoring
     (ComplianceMonitoringId, ActivityTypeCode, ComplianceMonitoringDate, InspectionTypeCode, ActivityName,
-     AirFacilityID, AirPollutantCode, InspectionUserDefinedField3, LeadAgencyCode, TransactionID)
+     AirFacilityID, AirPollutantCode, InspectionUserDefinedField3, LeadAgencyCode,MonitoringType, TransactionID)
     select ComplianceMonitoringId,
            'INS'   as ActivityTypeCode,
            ComplianceMonitoringDate,
@@ -168,6 +177,7 @@ BEGIN TRY
            AirPollutantCode,
            InspectionUserDefinedField3,
            'STA'   as LeadAgencyCode,
+           MonitoringType,
            newid() as TransactionID
     from #AllCmUpdates u
     where not exists (select 1

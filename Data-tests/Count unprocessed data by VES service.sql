@@ -5,7 +5,7 @@ select t.[VES Service],
        count(*) as [Count]
 from (select case
                  when s.TableName = 'ComplianceMonitoring'
-                     AND left(s.ForeignKey, 5) = 'DA'
+                     AND ForeignKey = 'DA'
                      AND s.Operation = 'delete'
                      then '06 DeleteAgencyComplianceMonitoring'
                  when s.TableName = 'AirFacility'
@@ -21,7 +21,7 @@ from (select case
                      AND s.Operation = 'delete'
                      then '08 DeleteComplianceMonitoringStrategy'
                  when s.TableName = 'ComplianceMonitoring'
-                     AND left(s.ForeignKey, 5) = 'TVACC'
+                     AND s.ForeignKey = 'TVACC'
                      AND s.Operation = 'delete'
                      then '07 DeleteTVACC'
                  when s.TableName = 'ComplianceMonitoring'
