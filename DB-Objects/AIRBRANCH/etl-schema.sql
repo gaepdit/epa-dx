@@ -1,0 +1,5 @@
+﻿use AIRBRANCH
+GO
+
+CREATE SCHEMA etl
+GO

@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../airbranch-db" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../geos-fis-dx" vcs="Git" />
   </component>
 </project>
