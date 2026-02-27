@@ -39,8 +39,9 @@ Previously  DWaldron            Initially created in Oracle
 2018-12-01  DWaldron            Fix missing FinalOrderIdentifier in Enf Actions: This only affected
                                 Case Files where final order exists when Case File first inserted. (DX-73)
 2024-09-17  DWaldron            Reformatted
-2024-09-20  DWaldron            Handle Proposed COs as if they were NOVs (icis-air #85)
-2026-01-30  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
+2024-09-20  DWaldron            Handle Proposed COs as if they were NOVs (icis-air/85)
+2026-01-30  DWaldron            Complete rewrite for the new Air Web App (epa-dx #2)
+2026-02-27  DWaldron            Only submit "reportable" Case Files (air-web/502)
 
 ***************************************************************************************************/
 
@@ -66,7 +67,8 @@ BEGIN TRY
            AirWebId
     into #CaseFileUpdates
     from etl.VW_ICIS_CaseFile
-    where DataExchangeStatus = 'U';
+    where DataExchangeStatus = 'U'
+      and IsReportable = 1;
 
     -- Update existing Case Files
     update t

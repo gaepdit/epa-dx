@@ -1,4 +1,4 @@
-﻿USE AirWeb
+USE AirWeb
 GO
 
 CREATE OR ALTER VIEW etl.VW_ICIS_CaseFileComplianceEvents
@@ -7,28 +7,33 @@ AS
 /**************************************************************************************************
 
 Author:     Doug Waldron
-Overview:   This view organizes information for No Further Action Letters for use by the
+Overview:   This view organizes information for Case File Compliance Events for use by the
             etl.ICIS_CaseFile_Update stored procedure.
 
 Modification History:
 When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2026-01-29  DWaldron            Initial version (epa-dx#2)
+2026-02-27  DWaldron            Only submit "reportable" Compliance Events (air-web/502)
 
 ***************************************************************************************************/
 
-select etl.EpaActionId(c.FacilityId, c.ActionNumber) as CaseFileId,
-       etl.EpaActionId(w.FacilityId, w.ActionNumber) as ComplianceMonitoringId,
-       c.Id                                          as AirWebId,
-       c.DataExchangeStatus
+select etl.EpaActionId(f.FacilityId, f.ActionNumber) as CaseFileId,
+       etl.EpaActionId(c.FacilityId, c.ActionNumber) as ComplianceMonitoringId,
+       f.Id                                          as AirWebId,
+       f.DataExchangeStatus
 from dbo.CaseFileComplianceEvents v
-    inner join dbo.CaseFiles c
+    inner join dbo.CaseFiles f
+        on f.Id = v.CaseFileId
+    inner join dbo.ComplianceWork c
         on c.Id = v.CaseFileId
-    inner join dbo.ComplianceWork w
-        on w.Id = v.CaseFileId
-where c.IsDeleted = 0
+where f.IsDeleted = 0
+  and f.ActionNumber is not null
+  and c.IsDeleted = 0
   and c.ActionNumber is not null
-  and w.IsDeleted = 0
-  and w.ActionNumber is not null;
+  and c.IsClosed = 1
+  --// Could probably be simplified as `<> N'Inspection'`
+  and c.ComplianceWorkType in
+      (N'AnnualComplianceCertification', N'Inspection', N'Report', N'SourceTestReview');
 
 GO
