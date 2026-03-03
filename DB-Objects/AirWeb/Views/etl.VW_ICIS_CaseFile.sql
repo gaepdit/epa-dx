@@ -15,6 +15,7 @@ When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2024-09-17  DWaldron            Reformatted
 2026-01-23  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
+2026-03-03  DWaldron            Include the IsReportable column (air-web/502)
 
 ***************************************************************************************************/
 
@@ -36,7 +37,8 @@ select etl.EpaActionId(c.FacilityId, c.ActionNumber) as CaseFileId,
        c.AirPrograms,
        c.PollutantIds,
        c.Id                                          as AirWebId,
-       c.DataExchangeStatus
+       c.DataExchangeStatus,
+       c.IsReportable
 from AirWeb.dbo.CaseFiles c
     left join AirWeb.dbo.ViolationTypes v
         on v.Code = c.ViolationTypeCode
