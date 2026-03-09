@@ -26,7 +26,8 @@ Previously  DWaldron            Initially created in Oracle
 2016-12-28  VDhande             Migrated to SQL Server
 2018-08-02  DWaldron            Exclude closed air program codes (DX-86)
 2019-02-13  DWaldron            Include SIP air program with CM event if no others exist (DX-107)
-2026-02-03  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
+2026-02-03  DWaldron            Complete rewrite for the new Air Web App (epa-dx #2)
+2026-03-09  DWaldron            Fix ACC deviations indicator (epa-dx #92)
 
 ***************************************************************************************************/
 
@@ -84,10 +85,13 @@ BEGIN TRY
            InspectionTypeCode,
            ActivityName,
            ComplianceMonitoringDate,
-           'TVACC'         AS MonitoringType,
+           'TVACC'      as MonitoringType,
            GaFacilityId as InspectionUserDefinedField3,
            TVACCReviewedDate,
-           FacilityReportDeviationsIndicator,
+           case
+               when FacilityReportDeviationsIndicator = 1 then 'Y'
+               when FacilityReportDeviationsIndicator = 0 then 'N'
+               end      as FacilityReportDeviationsIndicator,
            DbFormatAirsNumber,
            AirWebId
     into #AccUpdates
@@ -167,7 +171,8 @@ BEGIN TRY
 
     insert into NETWORKNODEFLOW.dbo.ComplianceMonitoring
     (ComplianceMonitoringId, ActivityTypeCode, ComplianceMonitoringDate, InspectionTypeCode, ActivityName,
-     AirFacilityID, AirPollutantCode, InspectionUserDefinedField3, LeadAgencyCode,MonitoringType, TransactionID)
+     AirFacilityID, AirPollutantCode, InspectionUserDefinedField3, LeadAgencyCode, MonitoringType,
+     TransactionID)
     select ComplianceMonitoringId,
            'INS'   as ActivityTypeCode,
            ComplianceMonitoringDate,

@@ -42,6 +42,7 @@ Previously  DWaldron            Initially created in Oracle
 2024-09-20  DWaldron            Handle Proposed COs as if they were NOVs (icis-air/85)
 2026-01-30  DWaldron            Complete rewrite for the new Air Web App (epa-dx #2)
 2026-02-27  DWaldron            Only submit "reportable" Case Files (air-web/502)
+2026-03-09  DWaldron            Fix enforcement action type codes (epa-dx #92)
 
 ***************************************************************************************************/
 
@@ -322,10 +323,10 @@ BEGIN TRY
     -- (No update or delete needed because Enforcement Action Type can't be changed)
     insert into NETWORKNODEFLOW.dbo.ENFORCEMENTACTIONCODE
     (ENFORCEMENTACTIONCODEID, ENFORCEMENTACTIONID, CODENAME, CODEVALUE)
-    select newid()                     as ENFORCEMENTACTIONCODEID,
-           EnforcementActionId         as ENFORCEMENTACTIONID,
-           'EnforcementActionTypeCode' as CODENAME,
-           ActionType                  as CODEVALUE
+    select newid()                                              as ENFORCEMENTACTIONCODEID,
+           EnforcementActionId                                  as ENFORCEMENTACTIONID,
+           'EnforcementActionTypeCode'                          as CODENAME,
+           iif(ActionType = N'ConsentOrder', N'SCAAAO', N'CIV') as CODEVALUE
     from #AllEaUpdates u
     where not exists (select 1
                       from NETWORKNODEFLOW.dbo.ENFORCEMENTACTIONCODE t
