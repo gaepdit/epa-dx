@@ -19,6 +19,7 @@ When        Who                 What
 Previously  DWaldron            Initially created in Oracle
 2016-09-16  DWaldron            Migrated to SQL Server
 2026-01-16  DWaldron            Updated for new Air Web app (epa-dx#2)
+2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
 
 ***************************************************************************************************/
 
@@ -42,12 +43,12 @@ BEGIN TRY
 
     update AirWeb.dbo.Fces set DataExchangeStatus = 'U' where FacilityId = @FormattedAirs;
 
-    update AirWeb.dbo.CaseFiles set DataExchangeStatus = 'U' where FacilityId = @FormattedAirs;
+    update AirWeb.dbo.EnforcementCaseFiles set DataExchangeStatus = 'U' where FacilityId = @FormattedAirs;
 
     update e
     set DataExchangeStatus = 'U'
     from AirWeb.dbo.EnforcementActions e
-        inner join AirWeb.dbo.CaseFiles c
+        inner join AirWeb.dbo.EnforcementCaseFiles c
             on c.Id = e.CaseFileId
     where c.FacilityId = @FormattedAirs
       and e.IsReportableAction = 1;

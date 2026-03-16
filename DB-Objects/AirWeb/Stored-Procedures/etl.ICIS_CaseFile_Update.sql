@@ -24,7 +24,7 @@ Tables written to:
   - NETWORKNODEFLOW.dbo.OTHERPATHWAYACTIVITYDATA
 
 Plus data exchange status reset in:
-  - AirWeb.dbo.CaseFiles
+  - AirWeb.dbo.EnforcementCaseFiles
   - AirWeb.dbo.EnforcementActions
 
 Modification History:
@@ -39,10 +39,11 @@ Previously  DWaldron            Initially created in Oracle
 2018-12-01  DWaldron            Fix missing FinalOrderIdentifier in Enf Actions: This only affected
                                 Case Files where final order exists when Case File first inserted. (DX-73)
 2024-09-17  DWaldron            Reformatted
-2024-09-20  DWaldron            Handle Proposed COs as if they were NOVs (icis-air/85)
-2026-01-30  DWaldron            Complete rewrite for the new Air Web App (epa-dx #2)
-2026-02-27  DWaldron            Only submit "reportable" Case Files (air-web/502)
-2026-03-09  DWaldron            Fix enforcement action type codes (epa-dx #92)
+2024-09-20  DWaldron            Handle Proposed COs as if they were NOVs (icis-air#85)
+2026-01-30  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
+2026-02-27  DWaldron            Only submit "reportable" Case Files (air-web#502)
+2026-03-09  DWaldron            Fix enforcement action type codes (epa-dx#92)
+2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
 
 ***************************************************************************************************/
 
@@ -448,7 +449,7 @@ BEGIN TRY
     update u
     set DataExchangeStatus     = 'P',
         DataExchangeStatusDate = sysdatetimeoffset()
-    from AirWeb.dbo.CaseFiles u
+    from AirWeb.dbo.EnforcementCaseFiles u
     where exists (select 1
                   from #CaseFileUpdates t
                   where t.AirWebId = u.Id)

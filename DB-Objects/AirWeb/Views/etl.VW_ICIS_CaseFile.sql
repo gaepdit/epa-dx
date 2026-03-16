@@ -15,7 +15,8 @@ When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2024-09-17  DWaldron            Reformatted
 2026-01-23  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
-2026-03-03  DWaldron            Include the IsReportable column (air-web/502)
+2026-03-03  DWaldron            Include the IsReportable column (air-web#502)
+2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
 
 ***************************************************************************************************/
 
@@ -39,7 +40,7 @@ select etl.EpaActionId(c.FacilityId, c.ActionNumber) as CaseFileId,
        c.Id                                          as AirWebId,
        c.DataExchangeStatus,
        c.IsReportable
-from AirWeb.dbo.CaseFiles c
+from AirWeb.dbo.EnforcementCaseFiles c
     left join AirWeb.dbo.ViolationTypes v
         on v.Code = c.ViolationTypeCode
     left join (select CaseFileId, min(IssueDate) as IssueDate

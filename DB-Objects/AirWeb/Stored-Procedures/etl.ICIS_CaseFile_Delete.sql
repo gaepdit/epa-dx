@@ -23,7 +23,8 @@ Previously  DWaldron            Initially created in Oracle
 2016-06-28  VDhande             Migrated to SQL Server
 2024-09-17  DWaldron            Reformatted
 2026-02-04  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
-2026-02-27  DWaldron            Delete pathway activities when NFA letters are deleted (air-web/502)
+2026-02-27  DWaldron            Delete pathway activities when NFA letters are deleted (air-web#502)
+2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
 
 ***************************************************************************************************/
 
@@ -35,7 +36,7 @@ BEGIN TRY
     select etl.EpaActionId(c.FacilityId, c.ActionNumber) as CaseFileId,
            c.Id                                          as AirWebId
     into #CaseFileDeletions
-    from dbo.CaseFiles c
+    from dbo.EnforcementCaseFiles c
     where c.IsDeleted = 1
       and c.ActionNumber is not null
       and exists (select 1
@@ -112,7 +113,7 @@ BEGIN TRY
     update u
     set DataExchangeStatus     = 'X',
         DataExchangeStatusDate = sysdatetimeoffset()
-    from dbo.CaseFiles u
+    from dbo.EnforcementCaseFiles u
     where exists (select 1
                   from #CaseFileDeletions t
                   where t.AirWebId = u.Id);
