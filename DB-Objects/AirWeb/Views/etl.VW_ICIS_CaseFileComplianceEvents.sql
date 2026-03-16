@@ -14,7 +14,8 @@ Modification History:
 When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2026-01-29  DWaldron            Initial version (epa-dx#2)
-2026-02-27  DWaldron            Only submit "reportable" Compliance Events (air-web/502)
+2026-02-27  DWaldron            Only submit "reportable" Compliance Events (air-web#502)
+2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
 
 ***************************************************************************************************/
 
@@ -23,7 +24,7 @@ select etl.EpaActionId(f.FacilityId, f.ActionNumber) as CaseFileId,
        f.Id                                          as AirWebId,
        f.DataExchangeStatus
 from dbo.CaseFileComplianceEvents v
-    inner join dbo.CaseFiles f
+    inner join dbo.EnforcementCaseFiles f
         on f.Id = v.CaseFileId
     inner join dbo.ComplianceWork c
         on c.Id = v.CaseFileId
