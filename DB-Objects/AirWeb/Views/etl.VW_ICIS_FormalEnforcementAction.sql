@@ -17,7 +17,8 @@ When        Who                 What
 2024-09-20  DWaldron            Handle Proposed COs as if they were NOVs (icis-air#85)
 2026-01-27  DWaldron            Complete rewrite for the new Air Web App; separates informal and
                                 formal EAs (epa-dx#2)
-2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
+2026-03-16  DWaldron            Renamed the Case Files table (epa-dx#95)
+2026-04-09  DWaldron            Renamed AirProgramCodes column (air-web#537, 1f183b3)
 
 ***************************************************************************************************/
 
@@ -36,7 +37,7 @@ select etl.EpaActionId(e.FacilityId, e.ActionNumber)              as Enforcement
        e.ExecutedDate,
        e.AppealedDate,
        etl.EpaActionId(c.FacilityId, c.ActionNumber)              as CaseFileId,
-       c.AirPrograms,
+       c.AirProgramCodes                                          as AirPrograms,
        c.PollutantIds,
        e.Id                                                       as AirWebId,
        e.DataExchangeStatus
