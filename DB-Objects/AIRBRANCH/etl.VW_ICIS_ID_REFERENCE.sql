@@ -15,6 +15,7 @@ When        Who                 What
 2016-10     DWaldron            Initial Version
 2019-12-09  DWaldron            Improved performance
 2026-01-22  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
+2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
 
 ***************************************************************************************************/
 
@@ -59,7 +60,7 @@ union all
 select AirWeb.etl.EpaActionId(c.FacilityId, c.ActionNumber),
        convert(varchar(8), c.Id),
        'CASEFILE'
-from AirWeb.dbo.CaseFiles c
+from AirWeb.dbo.EnforcementCaseFiles c
     INNER JOIN dbo.APBHEADERDATA AS hd
         ON c.FacilityId = iaip_facility.FormatAirsNumber(hd.STRAIRSNUMBER)
 where c.IsDeleted = 0
@@ -86,7 +87,7 @@ where e.IsDeleted = 0
     or (e.ActionType in ('ConsentOrder', 'AdministrativeOrder') and e.ExecutedDate is not null))
   and hd.STRAIRPROGRAMCODES NOT LIKE '0000000000000%'
   and e.CaseFileId in (select c.Id
-                       from AirWeb.dbo.CaseFiles c
+                       from AirWeb.dbo.EnforcementCaseFiles c
                        where c.IsDeleted = 0
                          and c.ActionNumber is not null)
 ;

@@ -14,6 +14,7 @@ Modification History:
 When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2026-01-29  DWaldron            Initial version (epa-dx#2)
+2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
 
 ***************************************************************************************************/
 
@@ -22,7 +23,7 @@ select etl.EpaActionId(c.FacilityId, c.ActionNumber) as CaseFileId,
        e.Id                                          as AirWebId,
        e.DataExchangeStatus
 from dbo.EnforcementActions e
-    inner join dbo.CaseFiles c
+    inner join dbo.EnforcementCaseFiles c
         on e.CaseFileId = c.Id
 where e.IsDeleted = 0
   and c.IsDeleted = 0

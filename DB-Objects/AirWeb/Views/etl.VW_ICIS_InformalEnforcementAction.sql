@@ -14,9 +14,10 @@ Modification History:
 When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2024-09-17  DWaldron            Reformatted
-2024-09-20  DWaldron            Handle Proposed COs as if they were NOVs (icis-air #85)
+2024-09-20  DWaldron            Handle Proposed COs as if they were NOVs (icis-air#85)
 2026-01-27  DWaldron            Complete rewrite for the new Air Web App; separates informal and
                                 formal EAs (epa-dx#2)
+2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
 
 ***************************************************************************************************/
 
@@ -33,7 +34,7 @@ select etl.EpaActionId(e.FacilityId, e.ActionNumber)          as EnforcementActi
        e.Id                                                   as AirWebId,
        e.DataExchangeStatus
 from AirWeb.dbo.EnforcementActions e
-    inner join AirWeb.dbo.CaseFiles c
+    inner join AirWeb.dbo.EnforcementCaseFiles c
         on c.Id = e.CaseFileId
         and c.IsDeleted = 0
 where e.IsDeleted = 0
