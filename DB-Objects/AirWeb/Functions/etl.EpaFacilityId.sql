@@ -1,4 +1,5 @@
-﻿USE AirWeb
+﻿-- USE AirWeb
+USE AIRBRANCH
 GO
 
 CREATE OR ALTER FUNCTION etl.EpaFacilityId
@@ -21,6 +22,7 @@ Modification History:
 When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2026-01-23  DWaldron            Initial Version (epa-id#2)
+2026-04-17  DWaldron            Add to both AirWeb and AIRBRANCH DBs to avoid permissions issues (iaip#1464)
 
 ***************************************************************************************************/
 

@@ -16,10 +16,12 @@ When        Who                 What
 2019-12-09  DWaldron            Improved performance
 2026-01-22  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
 2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
+2026-04-17  DWaldron            Use the AIRBRANCH version of etl.EpaFacilityId and etl.EpaActionId
+                                to avoid permissions issues (iaip#1464)
 
 ***************************************************************************************************/
 
-SELECT AirWeb.etl.EpaFacilityId(fi.STRAIRSNUMBER) AS EDTID,
+SELECT etl.EpaFacilityId(fi.STRAIRSNUMBER) AS EDTID,
 /* Facility */
        right(fi.STRAIRSNUMBER, 8)                   AS IAIPID,
        'AIRFACILITY'                                AS IDCategory
@@ -31,7 +33,7 @@ where hd.STRAIRPROGRAMCODES NOT LIKE '0000000000000%'
 UNION ALL
 
 /* FCE */
-select AirWeb.etl.EpaActionId(FacilityId, ActionNumber),
+select etl.EpaActionId(FacilityId, ActionNumber),
        convert(varchar(8), Id),
        'COMPLIANCEMONITORINGFCE'
 from AirWeb.dbo.Fces
@@ -41,7 +43,7 @@ where IsDeleted = 0
 union all
 
 /* Compliance Monitoring */
-select AirWeb.etl.EpaActionId(FacilityId, ActionNumber),
+select etl.EpaActionId(FacilityId, ActionNumber),
        convert(varchar(8), Id),
        case
            when ComplianceWorkType = 'AnnualComplianceCertification' then 'TVA'
@@ -57,7 +59,7 @@ where IsDeleted = 0
 union all
 
 /* Case file */
-select AirWeb.etl.EpaActionId(c.FacilityId, c.ActionNumber),
+select etl.EpaActionId(c.FacilityId, c.ActionNumber),
        convert(varchar(8), c.Id),
        'CASEFILE'
 from AirWeb.dbo.EnforcementCaseFiles c
@@ -75,7 +77,7 @@ where c.IsDeleted = 0
 union all
 
 /* NOV */
-select AirWeb.etl.EpaActionId(e.FacilityId, e.ActionNumber),
+select etl.EpaActionId(e.FacilityId, e.ActionNumber),
        convert(varchar(8), e.CaseFileId),
        'ENFORCEMENTACTION'
 from AirWeb.dbo.EnforcementActions e
