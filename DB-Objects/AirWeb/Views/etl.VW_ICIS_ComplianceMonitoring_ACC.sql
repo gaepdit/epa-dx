@@ -14,6 +14,7 @@ Modification History:
 When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2026-02-03  DWaldron            Split from etl.VW_ICIS_ComplianceMonitoring (epa-dx#2)
+2026-04-24  DWaldron            Use Reviewed date for Compliance Monitoring and ACC Reviewed dates (air-web#586)
 
 ***************************************************************************************************/
 
@@ -21,9 +22,11 @@ select etl.EpaActionId(c.FacilityId, c.ActionNumber)            as ComplianceMon
        etl.EpaFacilityId(c.FacilityId)                          as AirFacilityID,
        'TVA'                                                    as InspectionTypeCode,
        concat('GA EPD Title V ACC Review ID ', c.Id)            as ActivityName,
-       c.ClosedDate                                             as ComplianceMonitoringDate,
+       -- ICIS-Air requires a compliance monitoring date that is earlier than the ACC review date,
+       -- but Georgia only tracks a single date, so we subtract one day from the ACC review date.
+       dateadd(dd, -1, convert(date, c.ReviewedDate))              as ComplianceMonitoringDate,
        concat('Facility ID ', c.FacilityId)                     as GaFacilityId,
-       dateadd(dd, 1, c.ClosedDate)                             as TVACCReviewedDate,
+       convert(date, c.ReviewedDate)                               as TVACCReviewedDate,
        c.ReportsDeviations                                      as FacilityReportDeviationsIndicator,
        AIRBRANCH.iaip_facility.DbFormatAirsNumber(c.FacilityId) as DbFormatAirsNumber,
        c.Id                                                     as AirWebId,
