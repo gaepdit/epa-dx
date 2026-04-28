@@ -28,6 +28,7 @@ Previously  DWaldron            Initially created in Oracle
 2019-02-13  DWaldron            Include SIP air program with CM event if no others exist (DX-107)
 2026-02-03  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
 2026-03-09  DWaldron            Fix ACC deviations indicator (epa-dx#92)
+2026-04-27  DWaldron            Fix missing compliance inspection type code (epa-dx#100)
 
 ***************************************************************************************************/
 
@@ -190,24 +191,15 @@ BEGIN TRY
                       where t.ComplianceMonitoringId = u.ComplianceMonitoringId);
 
     --============================================================================================
-    -- Program Codes
-
-    select u.ComplianceMonitoringId,
-           u.DbFormatAirsNumber,
-           c.ICIS_PROGRAM_CODE as CodeValue
-    into #CmPrograms
-    from #AllCmUpdates u
-        left join AIRBRANCH.dbo.ICIS_PROGRAM_CODES c
-            on c.STRAIRSNUMBER = u.DbFormatAirsNumber
-            and c.OperatingStatusCode in ('OPR', 'SEA'); -- "Operational" and "Seasonal"
+    -- Delete and re-insert all compliance monitoring codes.
 
     delete t
     from NETWORKNODEFLOW.dbo.ComplianceMonitoringCode t
     where exists (select 1
-                  from #CmPrograms u
-                  where u.ComplianceMonitoringId = t.ComplianceMonitoringId
-                    and t.CodeName = 'ProgramCode');
+                  from #AllCmUpdates u
+                  where u.ComplianceMonitoringId = t.ComplianceMonitoringId);
 
+    -- (Re-)insert the Program Codes
     insert into NETWORKNODEFLOW.dbo.ComplianceMonitoringCode (ComplianceMonitoringId, CodeName, CodeValue)
     select u.ComplianceMonitoringId,
            'ProgramCode'                                                   as CodeName,
@@ -216,6 +208,13 @@ BEGIN TRY
         left join AIRBRANCH.dbo.ICIS_PROGRAM_CODES c
             on c.STRAIRSNUMBER = u.DbFormatAirsNumber
             and c.OperatingStatusCode in ('OPR', 'SEA');
+
+    --  (Re-)insert the Compliance Monitoring Type (ComplianceInspectionTypeCode)
+    insert into NETWORKNODEFLOW.dbo.ComplianceMonitoringCode (ComplianceMonitoringId, CodeName, CodeValue)
+    select u.ComplianceMonitoringId,
+           'ComplianceInspectionTypeCode' as CodeName,
+           InspectionTypeCode             as CodeValue
+    from #AllCmUpdates u;
 
     --============================================================================================
     -- Stack Tests
