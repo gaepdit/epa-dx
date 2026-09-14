@@ -17,7 +17,7 @@ When        Who                 What
 2026-01-23  DWaldron            Complete rewrite for the new Air Web App (epa-dx#2)
 2026-03-03  DWaldron            Include the IsReportable column (air-web#502)
 2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
-2026-04-09  DWaldron            Renamed AirProgramCodes column (air-web#537, 1f183b3)
+2026-04-09  DWaldron            Rename the AirProgramCodes column (air-web#537, 1f183b3)
 2026-05-06  DWaldron            Update violation type columns (epa-dx#102)
 2026-09-04  DWaldron            Filter out Case Files derived from RMP Inspections (epa-dx#108)
 2026-09-10  DWaldron            Remove the obsolete `IsReportable` column (epa-dx#108)

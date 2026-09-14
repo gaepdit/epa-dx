@@ -44,9 +44,11 @@ Previously  DWaldron            Initially created in Oracle
 2026-02-27  DWaldron            Only submit "reportable" Case Files (air-web#502)
 2026-03-09  DWaldron            Fix enforcement action type codes (epa-dx#92)
 2026-03-16  DWaldron            Rename the Case Files table (epa-dx#95)
-2026-09-04  DWaldron            Prevent adding Enforcement Action data without a corresponding
+2026-09-04  DWaldron            Prevent adding Enforcement Actions without a corresponding
                                 Case File (epa-dx#108)
 2026-09-10  DWaldron            Exclude Case Files with no Air Programs (epa#110)
+2026-09-14  DWaldron            Prevent adding Enforcement Action data without a corresponding
+                                Enforcement Action (epa-dx#108)
 
 ***************************************************************************************************/
 
@@ -292,7 +294,10 @@ BEGIN TRY
     from #AllEaUpdates u
     where not exists (select 1
                       from NETWORKNODEFLOW.dbo.EnforcementActionAirFacility t
-                      where t.EnforcementActionId = u.EnforcementActionId);
+                      where t.EnforcementActionId = u.EnforcementActionId)
+      and exists (select 1
+                  from NETWORKNODEFLOW.dbo.EnforcementAction t
+                  where t.EnforcementActionId = u.EnforcementActionId);
 
     -- Insert Case File to Enforcement Action linkage
     -- (No update or delete needed because case file/enforcement action linkage can't be changed.)
@@ -304,10 +309,7 @@ BEGIN TRY
                       where t.EnforcementActionId = u.EnforcementActionId)
       and exists (select 1
                   from NETWORKNODEFLOW.dbo.EnforcementAction t
-                  where t.EnforcementActionId = u.EnforcementActionId)
-      and exists (select 1
-                  from NETWORKNODEFLOW.dbo.CaseFile t
-                  where t.CaseFileId = u.CaseFileId);
+                  where t.EnforcementActionId = u.EnforcementActionId);
 
     -- Delete and reinsert Enforcement Action Programs and Pollutants
     delete t
@@ -323,8 +325,11 @@ BEGIN TRY
            EnforcementActionId    as ENFORCEMENTACTIONID,
            'ProgramsViolatedCode' as CODENAME,
            value                  as CODEVALUE
-    from #AllEaUpdates
-        cross apply openjson(AirPrograms);
+    from #AllEaUpdates u
+        cross apply openjson(AirPrograms)
+    where exists (select 1
+                  from NETWORKNODEFLOW.dbo.EnforcementAction t
+                  where t.EnforcementActionId = u.EnforcementActionId);
 
     insert into NETWORKNODEFLOW.dbo.ENFORCEMENTACTIONCODE
         (ENFORCEMENTACTIONCODEID, ENFORCEMENTACTIONID, CODENAME, CODEVALUE)
@@ -332,8 +337,11 @@ BEGIN TRY
            EnforcementActionId as ENFORCEMENTACTIONID,
            'AirPollutantCode'  as CODENAME,
            value               as CODEVALUE
-    from #AllEaUpdates
-        cross apply openjson(PollutantIds);
+    from #AllEaUpdates u
+        cross apply openjson(PollutantIds)
+    where exists (select 1
+                  from NETWORKNODEFLOW.dbo.EnforcementAction t
+                  where t.EnforcementActionId = u.EnforcementActionId);
 
     -- Insert Enforcement Action Type Code
     -- (No update or delete needed because Enforcement Action Type can't be changed)
@@ -347,7 +355,10 @@ BEGIN TRY
     where not exists (select 1
                       from NETWORKNODEFLOW.dbo.ENFORCEMENTACTIONCODE t
                       where t.ENFORCEMENTACTIONID = u.EnforcementActionId
-                        and t.CODENAME = 'EnforcementActionTypeCode');
+                        and t.CODENAME = 'EnforcementActionTypeCode')
+      and exists (select 1
+                  from NETWORKNODEFLOW.dbo.EnforcementAction t
+                  where t.EnforcementActionId = u.EnforcementActionId);
 
     -- Insert/update Final Orders
     update t
@@ -372,7 +383,10 @@ BEGIN TRY
     from #FormalEaUpdates u
     where not exists (select 1
                       from NETWORKNODEFLOW.dbo.AirDAFinalOrder t
-                      where t.EnforcementActionId = u.EnforcementActionId);
+                      where t.EnforcementActionId = u.EnforcementActionId)
+      and exists (select 1
+                  from NETWORKNODEFLOW.dbo.EnforcementAction t
+                  where t.EnforcementActionId = u.EnforcementActionId);
 
     -- Insert Final Order Facilities
     -- (No update or delete needed; Final Order Facility can't be changed)
@@ -383,7 +397,10 @@ BEGIN TRY
             on u.EnforcementActionId = f.EnforcementActionId
     where not exists (select 1
                       from NETWORKNODEFLOW.dbo.AirDAFinalOrderAirFacility t
-                      where t.AirDAFinalOrderId = f.AirDAFinalOrderId);
+                      where t.AirDAFinalOrderId = f.AirDAFinalOrderId)
+      and exists (select 1
+                  from NETWORKNODEFLOW.dbo.EnforcementAction t
+                  where t.EnforcementActionId = u.EnforcementActionId);
 
     -- Insert/update Enforcement Action Milestones.
     -- Milestones are only used for Formal Judicial Enforcement Actions (i.e., Administrative Orders)
@@ -462,8 +479,10 @@ BEGIN TRY
            'NAN'        as OTHERPATHWAYTYPECODE,
            u.IssueDate  as OTHERPATHWAYDATE
     from #NoFurtherAction u
-        cross apply (select 'ADDR' as Code union select 'RSLV' as Code) t;
-
+        cross apply (select 'ADDR' as Code union select 'RSLV' as Code) t
+    where exists (select 1
+                  from NETWORKNODEFLOW.dbo.CaseFile t
+                  where t.CaseFileId = u.CaseFileId);
     --============================================================================================
     -- Reset data exchange status indicators
 
