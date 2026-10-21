@@ -55,4 +55,4 @@ WHERE SubmissionStatus.TableName = 'AirFacility'
   AND SubmissionStatus.Status is NULL
   AND SubmissionStatus.Operation <> 'delete'
 --   AND SubmissionStatus.ID in ('{$AirFacilityID}')
---   AND [Transaction].TransactionTimestamp between '{$fromDate}' and '{$toDate}'
+--   AND SubmissionStatus.CreateDate between '{$fromDate}' and '{$toDate}'
