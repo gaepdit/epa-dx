@@ -1,0 +1,47 @@
+create table Pretreatment
+(
+    PretreatmentId                                             int identity,
+    ComplianceMonitoringId                                     varchar(25) not null,
+    SUOReference                                               varchar(15),
+    SUODate                                                    date,
+    AcceptanceHazardousWaste                                   varchar(3),
+    AcceptanceNonHazardousIndustrialWaste                      varchar(3),
+    AcceptanceHauledDomesticWastes                             varchar(3),
+    AnnualPretreatmentBudget                                   varchar(10),
+    InadequacySamplingInspectionInd                            varchar(3),
+    AdequacyPretreatmentResources                              varchar(3),
+    DeficienciesIdentifiedDuringIUFileReview                   varchar(3),
+    ControlMechanismDeficiencies                               varchar(3),
+    LegalAuthorityDeficiencies                                 varchar(3),
+    DeficienciesInterpretationApplicationPretreatmentStandards varchar(3),
+    DeficienciesDataManagementPublicParticipation              varchar(3),
+    ViolationIUScheduleRemedialMeasures                        varchar(3),
+    FormalResponseViolationIUScheduleRemedialMeasures          varchar(3),
+    AnnualFrequencyInfluentToxicantSampling                    int,
+    AnnualFrequencyEffluentToxicantSampling                    int,
+    AnnualFrequencySludgeToxicantSampling                      int,
+    NumberSIUs                                                 int,
+    SIUsWithoutControlMechanism                                int,
+    SIUsNotInspected                                           int,
+    SIUsNotSampled                                             int,
+    SIUsOnSchedule                                             int,
+    SIUsSNCWithPretreatmentStandards                           int,
+    SIUsSNCWithReportingRequirements                           int,
+    SIUsSNCWithPretreatmentSchedule                            int,
+    SIUsSNCPublishedNewspaper                                  int,
+    ViolationNoticesIssuedSIUs                                 int,
+    AdministrativeOrdersIssuedSIUs                             int,
+    CivilSuitsFiledAgainstSIUs                                 int,
+    CriminalSuitsFiledAgainstSIUs                              int,
+    DollarAmountPenaltiesCollected                             int,
+    IUsWhichPenaltiesHaveBeenCollected                         varchar(10),
+    NumberCIUs                                                 int,
+    CIUsInSNC                                                  int,
+    PassThroughInterferenceIndicator                           varchar(3),
+    constraint PK_Pretreatment
+        primary key (PretreatmentId)
+            with (fillfactor = 80),
+    constraint FK_Pretreatment_ComplianceMonitoring
+        foreign key (ComplianceMonitoringId) references ComplianceMonitoring
+);
+
