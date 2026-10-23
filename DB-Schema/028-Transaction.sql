@@ -6,6 +6,6 @@ create table [Transaction]
     TransactionTimestamp datetime,
     constraint PK_Transaction
         primary key (TransactionID)
-            with (fillfactor = 80)
+            with (fillfactor = 80),
 );
 

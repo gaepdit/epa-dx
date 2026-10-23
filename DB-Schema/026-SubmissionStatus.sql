@@ -9,7 +9,7 @@ create table SubmissionStatus
         constraint DF_Table_1_TimeStamp default getdate() not null,
     Status        varchar(15),
     SubmitDate    datetime,
-    StatusDetail  varchar(1000)
+    StatusDetail  varchar(1000),
 );
 
 create index SubmissionStatus_Status_ID_index
