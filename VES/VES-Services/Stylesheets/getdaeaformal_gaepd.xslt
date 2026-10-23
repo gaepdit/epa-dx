@@ -91,6 +91,7 @@
                             </FormalEAUserDefinedField6>
                         </xsl:if>
                         <xsl:for-each select="//v1:record[v1:TransactionID=$TransactionID][v1:EnforcementActionId=$EnforcementActionId][v1:AirDAFinalOrderId!=''][not(self::v1:record/v1:AirDAFinalOrderId=following-sibling::v1:record/v1:AirDAFinalOrderId)]">
+                            <xsl:variable name="AirDAFinalOrderId" select="v1:AirDAFinalOrderId"/>
                             <AirDAFinalOrder>
                                 <FinalOrderIdentifier>
                                     <xsl:value-of select="v1:FinalOrderIdentifier" />
@@ -126,7 +127,7 @@
                                     <xsl:value-of select="v1:OtherComments" />
                                 </OtherComments>
                                 </xsl:if>
-                                <xsl:if test="v1:DemandStipulatedPenaltyAmount!= ''" >
+                                <xsl:for-each select="//v1:record[v1:TransactionID=$TransactionID][v1:EnforcementActionId=$EnforcementActionId][v1:AirDAFinalOrderId=$AirDAFinalOrderId][v1:StipulatedPenaltiesId!=''][not(self::v1:record/v1:StipulatedPenaltiesId=following-sibling::v1:record/v1:StipulatedPenaltiesId)]">
                                     <DemandStipulatedPenaltyData>
                                         <DemandStipulatedPenaltyAmount>
                                             <xsl:value-of select="v1:DemandStipulatedPenaltyAmount" />
@@ -135,7 +136,7 @@
                                             <xsl:value-of select="v1:DemandStipulatedPenaltyPaidDate" />
                                         </DemandStipulatedPenaltyPaidDate>
                                     </DemandStipulatedPenaltyData>
-                                </xsl:if>
+                                </xsl:for-each>
                             </AirDAFinalOrder>
                         </xsl:for-each>
                         <LeadAgencyCode>
