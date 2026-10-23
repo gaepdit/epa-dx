@@ -59,5 +59,5 @@ FROM EnforcementAction
            EnforcementAction.EnforcementActionId = SubmissionStatus.ID AND
            SubmissionStatus.TableName = 'EnforcementAction' AND SubmissionStatus.Status is NULL AND
            SubmissionStatus.Operation <> 'delete'
--- WHERE SubmissionStatus.ID in ('{$EnforcementActionID}') AND
---       [Transaction].TransactionTimestamp between '{$fromDate}' and '{$toDate}'
+WHERE SubmissionStatus.ID in ('{$EnforcementActionID}') AND
+      [Transaction].TransactionTimestamp between '{$fromDate}' and '{$toDate}'
