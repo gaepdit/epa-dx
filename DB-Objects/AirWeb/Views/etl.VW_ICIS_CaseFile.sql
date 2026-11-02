@@ -21,6 +21,7 @@ When        Who                 What
 2026-05-06  DWaldron            Update violation type columns (epa-dx#102)
 2026-09-04  DWaldron            Filter out Case Files derived from RMP Inspections (epa-dx#108)
 2026-09-10  DWaldron            Remove the obsolete `IsReportable` column (epa-dx#108)
+2026-11-02  DWaldron            Fix the FRV Determination Date (epa-dx#113)
 
 ***************************************************************************************************/
 
@@ -36,7 +37,7 @@ select distinct etl.EpaActionId(f.FacilityId, f.ActionNumber) as CaseFileId,
                 i.IssueDate                                   as AdvisementMethodDate,
                 iif(i.IssueDate is null, null, 'LTR')         as AdvisementMethodTypeCode,
                 f.ViolationTypeCode,
-                f.DayZero                                     as FrvDeterminationDate,
+                i.IssueDate                                   as FrvDeterminationDate,
                 iif(v.Severity = 'HPV', f.DayZero, null)      as HpvDayZeroDate,
                 concat('Facility ID ', f.FacilityId)          as GaFacilityId,
                 f.AirProgramCodes                             as AirPrograms,
