@@ -22,6 +22,7 @@ Tables written to:
   - NETWORKNODEFLOW.dbo.AirDAFinalOrderAirFacility
   - NETWORKNODEFLOW.dbo.EnforcementActionMilestone
   - NETWORKNODEFLOW.dbo.OTHERPATHWAYACTIVITYDATA
+  - NETWORKNODEFLOW.dbo.StipulatedPenalties
 
 Plus data exchange status reset in:
   - AirWeb.dbo.EnforcementCaseFiles
@@ -49,6 +50,7 @@ Previously  DWaldron            Initially created in Oracle
 2026-09-10  DWaldron            Exclude Case Files with no Air Programs (epa#110)
 2026-09-14  DWaldron            Prevent adding Enforcement Action data without a corresponding
                                 Enforcement Action (epa-dx#108)
+2026-10-23  DWaldron            Populate final order stipulated penalties (epa-dx#111)
 
 ***************************************************************************************************/
 
@@ -393,7 +395,7 @@ BEGIN TRY
     insert into NETWORKNODEFLOW.dbo.AirDAFinalOrderAirFacility (AirDAFinalOrderId, AirFacilityId)
     select f.AirDAFinalOrderId, u.AirFacilityId
     from NETWORKNODEFLOW.dbo.AirDAFinalOrder f
-        inner join #AllEaUpdates u
+        inner join #FormalEaUpdates u
             on u.EnforcementActionId = f.EnforcementActionId
     where not exists (select 1
                       from NETWORKNODEFLOW.dbo.AirDAFinalOrderAirFacility t
@@ -401,6 +403,30 @@ BEGIN TRY
       and exists (select 1
                   from NETWORKNODEFLOW.dbo.EnforcementAction t
                   where t.EnforcementActionId = u.EnforcementActionId);
+
+    -- Delete and reinsert Final Order Stipulated Penalties
+    delete t
+    from NETWORKNODEFLOW.dbo.StipulatedPenalties t
+    where exists (select 1
+                  from NETWORKNODEFLOW.dbo.AirDAFinalOrder f
+                      inner join #FormalEaUpdates u
+                          on u.EnforcementActionId = f.EnforcementActionId
+                  where f.AirDAFinalOrderId = t.AirDAFinalOrderId);
+
+    insert into NETWORKNODEFLOW.dbo.StipulatedPenalties
+    (StipulatedPenaltiesId, AirDAFinalOrderId, DemandStipulatedPenaltyAmount, DemandStipulatedPenaltyPaidDate)
+    select s.Id           as StipulatedPenaltiesId,
+           f.AirDAFinalOrderId,
+           s.Amount       as DemandStipulatedPenaltyAmount,
+           s.ReceivedDate as DemandStipulatedPenaltyPaidDate
+    from NETWORKNODEFLOW.dbo.AirDAFinalOrder f
+        inner join #FormalEaUpdates u
+            on u.EnforcementActionId = f.EnforcementActionId
+        inner join AirWeb.dbo.StipulatedPenalties s
+            on s.ConsentOrderId = u.AirWebId
+    where u.ActionType = 'ConsentOrder'
+      and s.IsDeleted = 0
+    order by s.ReceivedDate, s.CreatedAt;
 
     -- Insert/update Enforcement Action Milestones.
     -- Milestones are only used for Formal Judicial Enforcement Actions (i.e., Administrative Orders)
