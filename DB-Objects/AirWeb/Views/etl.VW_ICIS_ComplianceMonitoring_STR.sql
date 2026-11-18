@@ -15,6 +15,7 @@ When        Who                 What
 ----------  ------------------  -------------------------------------------------------------------
 2026-02-03  DWaldron            Split from etl.VW_ICIS_ComplianceMonitoring (epa-dx#2)
 2026-07-09  DWaldron            Include open compliance reviews as "pending" data (epa-dx#105)
+2026-11-18  DWaldron            Fix incorrect status code for the 'Indeterminate' status (epa-dx#118)
 
 ***************************************************************************************************/
 
@@ -33,7 +34,7 @@ select etl.EpaActionId(c.FacilityId, c.ActionNumber)            as ComplianceMon
        case
            when i.STRCOMPLIANCESTATUS = '01' then 'PEN'
            when i.STRCOMPLIANCESTATUS in ('02', '03') then 'PSS'
-           when i.STRCOMPLIANCESTATUS = '04' then 'PNA'
+           when i.STRCOMPLIANCESTATUS = '04' then 'NA'
            when i.STRCOMPLIANCESTATUS = '05' then 'FAI'
            end                                                  as StackTestStatusCode,
        iif(i.DATCOMPLETEDATE < '1970-01-01', null, convert(date, i.DATCOMPLETEDATE))
