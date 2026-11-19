@@ -51,6 +51,7 @@ Previously  DWaldron            Initially created in Oracle
 2026-09-14  DWaldron            Prevent adding Enforcement Action data without a corresponding
                                 Enforcement Action (epa-dx#108)
 2026-10-23  DWaldron            Populate final order stipulated penalties (epa-dx#111)
+2026-11-19  DWaldron            Prevent staging enforcement actions with no Air Programs (epa-dx#117)
 
 ***************************************************************************************************/
 
@@ -196,7 +197,8 @@ BEGIN TRY
            AirWebId
     into #InformalEaUpdates
     from etl.VW_ICIS_InformalEnforcementAction
-    where DataExchangeStatus = 'U';
+    where DataExchangeStatus = 'U'
+      and AirPrograms <> '[]';
 
     select EnforcementActionId,
            AirFacilityId,
@@ -214,7 +216,8 @@ BEGIN TRY
            AirWebId
     into #FormalEaUpdates
     from etl.VW_ICIS_FormalEnforcementAction
-    where DataExchangeStatus = 'U';
+    where DataExchangeStatus = 'U'
+      and AirPrograms <> '[]';
 
     select EnforcementActionId, ActionType, AirPrograms, PollutantIds, CaseFileId, AirFacilityId, AirWebId
     into #AllEaUpdates

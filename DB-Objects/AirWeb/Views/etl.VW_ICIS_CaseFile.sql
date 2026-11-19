@@ -65,6 +65,9 @@ where f.IsDeleted = 0
   and exists (select 1
               from NETWORKNODEFLOW.dbo.AirFacility
               where AirFacilityID = etl.EpaFacilityId(f.FacilityId))
+  -- We don't want to submit Case Files without a reportable Enforcement Action, but if a Case File
+  -- has already been submitted (and the reportable EA subsequently deleted), we need to continue
+  -- submitting updates.
   and (exists (select 1
                from AirWeb.dbo.EnforcementActions e
                where e.CaseFileId = f.Id
